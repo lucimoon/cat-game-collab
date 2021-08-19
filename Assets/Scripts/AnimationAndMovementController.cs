@@ -41,21 +41,33 @@ public class AnimationAndMovementController : MonoBehaviour
 
     void Awake()
     {
-        // Set initial reference variables
-        playerInput = new PlayerInput();
-        characterController = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
-
-        // Set parameter hash references
-        isMovingHash = Animator.StringToHash("isMoving");
-        isRunningHash = Animator.StringToHash("isRunning");
-        isJumpingHash = Animator.StringToHash("isJumping");
-
-        initPlayerInputCallbacks();
-        setupJumpVariables();
+        initAnimatorReferences();
+        initClassInstances();
+        initComponentReferences();
+        initJumpVariables();
+        initPlayerInput();
     }
 
-    void initPlayerInputCallbacks()
+    void Update()
+    {
+        handleAnimation();
+        handleRotation();
+        handleRun();
+        handleGravity();
+        handleJump();
+    }
+
+    void OnEnable()
+    {
+        playerInput.CharacterControls.Enable();
+    }
+
+    void OnDisable()
+    {
+        playerInput.CharacterControls.Disable();
+    }
+
+    void initPlayerInput()
     {
         playerInput.CharacterControls.Move.started += onMovementInput;
         playerInput.CharacterControls.Move.canceled += onMovementInput;
@@ -66,17 +78,34 @@ public class AnimationAndMovementController : MonoBehaviour
         playerInput.CharacterControls.Jump.canceled += onJump;
     }
 
-    void setupJumpVariables()
+    void initJumpVariables()
     {
         float timeToApex = maxJumpTime / 2;
         gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
         initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
     }
 
+    void initAnimatorReferences()
+    {
+        isMovingHash = Animator.StringToHash("isMoving");
+        isRunningHash = Animator.StringToHash("isRunning");
+        isJumpingHash = Animator.StringToHash("isJumping");
+    }
+
+    void initComponentReferences()
+    {
+        characterController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+    }
+
+    void initClassInstances()
+    {
+        playerInput = new PlayerInput();
+    }
+
     void onJump(InputAction.CallbackContext context)
     {
         isJumpPressed = context.ReadValueAsButton();
-        Debug.Log(isJumpPressed);
     }
 
     void onRun(InputAction.CallbackContext context)
@@ -92,7 +121,6 @@ public class AnimationAndMovementController : MonoBehaviour
         currentRunMovement.x = currentMovementInput.x * runMultiplier;
         currentRunMovement.z = currentMovementInput.y * runMultiplier;
         isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
-        Debug.Log(currentMovementInput);
     }
 
     void handleAnimation()
@@ -160,12 +188,8 @@ public class AnimationAndMovementController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void handleRun()
     {
-        handleAnimation();
-        handleRotation();
-
         if (isRunPressed)
         {
             characterController.Move(currentRunMovement * Time.deltaTime);
@@ -174,20 +198,5 @@ public class AnimationAndMovementController : MonoBehaviour
         {
             characterController.Move(currentMovement * Time.deltaTime);
         }
-
-        handleGravity();
-        handleJump();
-    }
-
-
-
-    void OnEnable()
-    {
-        playerInput.CharacterControls.Enable();
-    }
-
-    void OnDisable()
-    {
-        playerInput.CharacterControls.Disable();
     }
 }
