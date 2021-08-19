@@ -24,7 +24,8 @@ public class AnimationAndMovementController : MonoBehaviour
 
   // Constants
   float rotationFactorPerFrame = 15.0f;
-  float runMultiplier = 5.0f;
+  float walkMultiplier = 3.0f;
+  float runMultiplier = 7.0f;
   int zero = 0;
   float gravity = -9.8f;
   float groundedGravity = -.05f;
@@ -32,9 +33,11 @@ public class AnimationAndMovementController : MonoBehaviour
   // Jumping variables
   bool isJumpPressed = false;
   float initialJumpVelocity;
-  float maxJumpHeight = 1.0f;
-  float maxJumpTime = 0.5f;
+  float maxJumpHeight = 6.0f;
+  float maxJumpTime = 0.75f * 1.2f;
   bool isJumping = false;
+  int isJumpingHash;
+  bool isJumpAnimating = false;
 
   // Awake is called earlier than start
   void Awake()
@@ -47,6 +50,7 @@ public class AnimationAndMovementController : MonoBehaviour
     // Set parameter hash references
     isWalkingHash = Animator.StringToHash("isWalking");
     isRunningHash = Animator.StringToHash("isRunning");
+    isJumpingHash = Animator.StringToHash("isJumping");
 
     // Set player input callbacks
     playerInput.CharacterControls.Move.started += onMovementInput;
@@ -56,6 +60,8 @@ public class AnimationAndMovementController : MonoBehaviour
     playerInput.CharacterControls.Run.canceled += onRun;
     playerInput.CharacterControls.Jump.started += onJump;
     playerInput.CharacterControls.Jump.canceled += onJump;
+
+    setupJumpVariables();
   }
 
   void setupJumpVariables()
@@ -79,8 +85,8 @@ public class AnimationAndMovementController : MonoBehaviour
   void onMovementInput(InputAction.CallbackContext context)
   {
     currentMovementInput = context.ReadValue<Vector2>();
-    currentMovement.x = currentMovementInput.x;
-    currentMovement.z = currentMovementInput.y;
+    currentMovement.x = currentMovementInput.x * walkMultiplier;
+    currentMovement.z = currentMovementInput.y * walkMultiplier;
     currentRunMovement.x = currentMovementInput.x * runMultiplier;
     currentRunMovement.z = currentMovementInput.y * runMultiplier;
     isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
@@ -135,6 +141,12 @@ public class AnimationAndMovementController : MonoBehaviour
   {
     if (characterController.isGrounded)
     {
+      if (isJumpAnimating)
+      {
+        animator.SetBool(isJumpingHash, false);
+        isJumpAnimating = false;
+      }
+
       currentMovement.y = groundedGravity;
       currentRunMovement.y = groundedGravity;
     }
@@ -152,6 +164,8 @@ public class AnimationAndMovementController : MonoBehaviour
   {
     if (!isJumping && characterController.isGrounded && isJumpPressed)
     {
+      animator.SetBool(isJumpingHash, true);
+      isJumpAnimating = true;
       isJumping = true;
       currentMovement.y = initialJumpVelocity * 0.5f;
       currentRunMovement.y = initialJumpVelocity * 0.5f;
