@@ -423,6 +423,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 633538683062325214, guid: 57f598ba6bbfb421188ec3cb3da1cb9b, type: 3}
+      propertyPath: maxJumpTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 633538683062325214, guid: 57f598ba6bbfb421188ec3cb3da1cb9b, type: 3}
+      propertyPath: maxJumpHeight
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 633538683062325215, guid: 57f598ba6bbfb421188ec3cb3da1cb9b, type: 3}
       propertyPath: m_Center.y
       value: 1
