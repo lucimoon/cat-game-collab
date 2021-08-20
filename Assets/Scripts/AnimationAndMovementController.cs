@@ -9,16 +9,15 @@ public class AnimationAndMovementController : MonoBehaviour
     PlayerInput playerInput;
     CharacterController characterController;
     Animator animator;
+    float speedMultiplier = 1f;
 
     // Variables to store optimized setter/getter parameter IDs
     int isMovingHash;
     int isRunningHash;
 
-
     // Variables to store player input values
     Vector3 currentMovementInput;
     Vector3 currentMovement;
-    Vector3 currentRunMovement;
     bool isMovementPressed;
     bool isRunPressed;
 
@@ -27,14 +26,14 @@ public class AnimationAndMovementController : MonoBehaviour
     float walkMultiplier = 3.0f;
     float runMultiplier = 7.0f;
     int zero = 0;
-    float gravity = -9.8f;
+    float gravity;
     float groundedGravity = -.05f;
 
     // Jumping variables
+    public float maxJumpTime = 0.9f;
+    public float maxJumpHeight = 6.0f;
     bool isJumpPressed = false;
-    float initialJumpVelocity;
-    float maxJumpHeight = 6.0f;
-    float maxJumpTime = 0.75f * 1.2f;
+    object isJumpPressedObject;
     bool isJumping = false;
     int isJumpingHash;
     bool isJumpAnimating = false;
@@ -44,7 +43,6 @@ public class AnimationAndMovementController : MonoBehaviour
         initAnimatorReferences();
         initClassInstances();
         initComponentReferences();
-        initJumpVariables();
         initPlayerInput();
     }
 
@@ -52,9 +50,9 @@ public class AnimationAndMovementController : MonoBehaviour
     {
         handleAnimation();
         handleRotation();
-        handleRun();
         handleGravity();
         handleJump();
+        move();
     }
 
     void OnEnable()
@@ -76,13 +74,6 @@ public class AnimationAndMovementController : MonoBehaviour
         playerInput.CharacterControls.Run.canceled += onRun;
         playerInput.CharacterControls.Jump.started += onJump;
         playerInput.CharacterControls.Jump.canceled += onJump;
-    }
-
-    void initJumpVariables()
-    {
-        float timeToApex = maxJumpTime / 2;
-        gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-        initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
     }
 
     void initAnimatorReferences()
@@ -111,25 +102,38 @@ public class AnimationAndMovementController : MonoBehaviour
     void onRun(InputAction.CallbackContext context)
     {
         isRunPressed = context.ReadValueAsButton();
+        speedMultiplier = isRunPressed ? runMultiplier : walkMultiplier;
     }
 
     void onMovementInput(InputAction.CallbackContext context)
     {
         currentMovementInput = context.ReadValue<Vector2>();
-        currentMovement.x = currentMovementInput.x * walkMultiplier;
-        currentMovement.z = currentMovementInput.y * walkMultiplier;
-        currentRunMovement.x = currentMovementInput.x * runMultiplier;
-        currentRunMovement.z = currentMovementInput.y * runMultiplier;
+        currentMovement.x = currentMovementInput.x;
+        currentMovement.z = currentMovementInput.y;
         isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
     }
 
-    void handleAnimation()
+    private float getGravity()
+    {
+        // TODO: serialize timeToFall so it's tweakable in editor
+        float timeToFall = maxJumpTime / 2;
+        return (-2 * maxJumpHeight) / Mathf.Pow(timeToFall, 2);
+    }
+
+    private float getJumpVelocity()
+    {
+        // TODO: serialize timeToApex so it's tweakable in editor
+        float timeToApex = maxJumpTime / 2;
+        return (2 * maxJumpHeight) / timeToApex;
+    }
+
+    private void handleAnimation()
     {
         animator.SetBool("isMoving", isMovementPressed);
         animator.SetBool("isRunning", isRunPressed);
     }
 
-    void handleRotation()
+    private void handleRotation()
     {
         Vector3 positionToLookAt;
         // The change in position the character should point to
@@ -148,8 +152,7 @@ public class AnimationAndMovementController : MonoBehaviour
         }
     }
 
-    // Apply proper gravity
-    void handleGravity()
+    private void handleGravity()
     {
         if (characterController.isGrounded)
         {
@@ -160,43 +163,42 @@ public class AnimationAndMovementController : MonoBehaviour
             }
 
             currentMovement.y = groundedGravity;
-            currentRunMovement.y = groundedGravity;
         }
         else
         {
             float previousYVelocity = currentMovement.y;
-            float newYVelocity = currentMovement.y + (gravity * Time.deltaTime);
+            float newYVelocity = currentMovement.y + (getGravity() * Time.deltaTime);
             float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
             currentMovement.y = nextYVelocity;
-            currentRunMovement.y = nextYVelocity;
         }
     }
 
-    void handleJump()
+    private void handleJump()
     {
-        if (!isJumping && characterController.isGrounded && isJumpPressed)
+        bool shouldJump = !isJumping && characterController.isGrounded && isJumpPressed;
+        bool hasLanded = !isJumpPressed && isJumping && characterController.isGrounded;
+
+        if (shouldJump)
         {
             animator.SetBool(isJumpingHash, true);
             isJumpAnimating = true;
             isJumping = true;
-            currentMovement.y = initialJumpVelocity * 0.5f;
-            currentRunMovement.y = initialJumpVelocity * 0.5f;
+            currentMovement.y = getJumpVelocity();
         }
-        else if (!isJumpPressed && isJumping && characterController.isGrounded)
+        else if (hasLanded)
         {
             isJumping = false;
         }
     }
 
-    void handleRun()
+    private void move()
     {
-        if (isRunPressed)
-        {
-            characterController.Move(currentRunMovement * Time.deltaTime);
-        }
-        else
-        {
-            characterController.Move(currentMovement * Time.deltaTime);
-        }
+        Vector3 motion = new Vector3(
+            currentMovement.x * speedMultiplier,
+            currentMovement.y,
+            currentMovement.z * speedMultiplier
+        );
+
+        characterController.Move(motion * Time.deltaTime);
     }
 }
