@@ -12,6 +12,8 @@ public class AnimationAndMovementController : MonoBehaviour
     float speedMultiplier = 1f;
 
     // Variables to store optimized setter/getter parameter IDs
+    int isFallingHash;
+    int isJumpingHash;
     int isMovingHash;
     int isRunningHash;
 
@@ -35,7 +37,6 @@ public class AnimationAndMovementController : MonoBehaviour
     bool isJumpPressed = false;
     object isJumpPressedObject;
     bool isJumping = false;
-    int isJumpingHash;
     bool isJumpAnimating = false;
 
     void Awake()
@@ -81,6 +82,7 @@ public class AnimationAndMovementController : MonoBehaviour
         isMovingHash = Animator.StringToHash("isMoving");
         isRunningHash = Animator.StringToHash("isRunning");
         isJumpingHash = Animator.StringToHash("isJumping");
+        isFallingHash = Animator.StringToHash("isFalling");
     }
 
     void initComponentReferences()
@@ -159,6 +161,7 @@ public class AnimationAndMovementController : MonoBehaviour
             if (isJumpAnimating)
             {
                 animator.SetBool(isJumpingHash, false);
+                animator.SetBool(isFallingHash, false);
                 isJumpAnimating = false;
             }
 
@@ -166,10 +169,17 @@ public class AnimationAndMovementController : MonoBehaviour
         }
         else
         {
+
             float previousYVelocity = currentMovement.y;
             float newYVelocity = currentMovement.y + (getGravity() * Time.deltaTime);
             float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
             currentMovement.y = nextYVelocity;
+
+            Debug.Log(nextYVelocity);
+            if (previousYVelocity > 10 && nextYVelocity < 10)
+            {
+                animator.SetBool(isFallingHash, true);
+            }
         }
     }
 
