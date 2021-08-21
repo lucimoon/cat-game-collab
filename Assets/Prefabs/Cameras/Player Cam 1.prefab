@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1444650794202699132
+--- !u!1 &6743409718862837904
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1444650794202699134}
-  - component: {fileID: 1444650794202699135}
+  - component: {fileID: 6743409718862837906}
+  - component: {fileID: 6743409718862837907}
   m_Layer: 0
   m_Name: Player Cam 1
   m_TagString: Untagged
@@ -17,28 +17,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1444650794202699134
+--- !u!4 &6743409718862837906
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794202699132}
-  m_LocalRotation: {x: 0.10174418, y: -0.000002421372, z: 0.0000005869894, w: 0.9948106}
-  m_LocalPosition: {x: -0.000000072227664, y: 4.2686915, z: -8.655073}
+  m_GameObject: {fileID: 6743409718862837904}
+  m_LocalRotation: {x: 0.13687147, y: -0.0000024406281, z: 0.0000005009684, w: 0.99058884}
+  m_LocalPosition: {x: -0.35654235, y: 6.1029115, z: -9.542635}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1444650794309762395}
+  - {fileID: 6743409719003435191}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 11.679, y: 0, z: 0}
---- !u!114 &1444650794202699135
+  m_LocalEulerAnglesHint: {x: 15.734, y: 0, z: 0}
+--- !u!114 &6743409718862837907
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794202699132}
+  m_GameObject: {fileID: 6743409718862837904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
@@ -54,14 +54,14 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 30.5
-    OrthographicSize: 4.3
+    OrthographicSize: 6
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.6873385, y: 1}
+    m_SensorSize: {x: 1.2364341, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -69,8 +69,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_LegacyBlendHint: 0
-  m_ComponentOwner: {fileID: 1444650794309762395}
---- !u!1 &1444650794309762392
+  m_ComponentOwner: {fileID: 6743409719003435191}
+--- !u!1 &6743409719003435188
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,10 +78,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1444650794309762395}
-  - component: {fileID: 1444650794309762372}
-  - component: {fileID: 1444650794309762373}
-  - component: {fileID: 1444650794309762394}
+  - component: {fileID: 6743409719003435191}
+  - component: {fileID: 6743409719003435176}
+  - component: {fileID: 6743409719003435177}
+  - component: {fileID: 6743409719003435190}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -89,39 +89,39 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1444650794309762395
+--- !u!4 &6743409719003435191
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794309762392}
+  m_GameObject: {fileID: 6743409719003435188}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 1.9411056, y: -10.0188675, z: 34.014774}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1444650794202699134}
+  m_Father: {fileID: 6743409718862837906}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1444650794309762372
+--- !u!114 &6743409719003435176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794309762392}
+  m_GameObject: {fileID: 6743409719003435188}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1444650794309762373
+--- !u!114 &6743409719003435177
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794309762392}
+  m_GameObject: {fileID: 6743409719003435188}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
@@ -142,19 +142,19 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
---- !u!114 &1444650794309762394
+--- !u!114 &6743409719003435190
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444650794309762392}
+  m_GameObject: {fileID: 6743409719003435188}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 4.2666674, z: 8.64528}
+  m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
@@ -162,17 +162,17 @@ MonoBehaviour:
   m_YDamping: 0.5
   m_ZDamping: 1
   m_TargetMovementOnly: 1
-  m_ScreenX: 0.5
-  m_ScreenY: 0.5
-  m_CameraDistance: 0.010072083
+  m_ScreenX: 0.52403337
+  m_ScreenY: 0.7738838
+  m_CameraDistance: 10.84
   m_DeadZoneWidth: 0.18
-  m_DeadZoneHeight: 0
+  m_DeadZoneHeight: 0.411
   m_DeadZoneDepth: 100
-  m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
+  m_UnlimitedSoftZone: 1
+  m_SoftZoneWidth: 0.741
+  m_SoftZoneHeight: 0.44
   m_BiasX: 0
-  m_BiasY: 0
+  m_BiasY: -0.5
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
   m_AdjustmentMode: 0
