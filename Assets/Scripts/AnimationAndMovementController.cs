@@ -4,12 +4,20 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class AnimationAndMovementController : MonoBehaviour
 {
+    // Interface variables
+    [Header("Speed Multipliers")]
+    [SerializeField] private float walkMultiplier = 3.0f;
+    [SerializeField] private float runMultiplier = 7.0f;
+
+    [Header("Jump Parameters")]
+    [SerializeField] private float maxJumpHeight = 6.0f;
+    [SerializeField] private float jumpTimeToApex = 0.45f;
+    [SerializeField] private float jumpTimeToFall = 0.2f;
 
     // Declare reference variables
     PlayerInput playerInput;
     CharacterController characterController;
     Animator animator;
-    float speedMultiplier = 1f;
 
     // Variables to store optimized setter/getter parameter IDs
     int isFallingHash;
@@ -25,17 +33,14 @@ public class AnimationAndMovementController : MonoBehaviour
 
     // Constants
     float rotationFactorPerFrame = 15.0f;
-    float walkMultiplier = 3.0f;
-    float runMultiplier = 7.0f;
     int zero = 0;
     float gravity;
     float groundedGravity = -.05f;
+    float FALL_THRESHOLD = -2f;
 
     // Jumping variables
-    public float maxJumpTime = 0.9f;
-    public float maxJumpHeight = 6.0f;
+
     bool isJumpPressed = false;
-    object isJumpPressedObject;
     bool isJumping = false;
     bool isJumpAnimating = false;
 
@@ -99,12 +104,13 @@ public class AnimationAndMovementController : MonoBehaviour
     void onJump(InputAction.CallbackContext context)
     {
         isJumpPressed = context.ReadValueAsButton();
+
+        if (context.phase == InputActionPhase.Canceled) cancelJump();
     }
 
     void onRun(InputAction.CallbackContext context)
     {
         isRunPressed = context.ReadValueAsButton();
-        speedMultiplier = isRunPressed ? runMultiplier : walkMultiplier;
     }
 
     void onMovementInput(InputAction.CallbackContext context)
@@ -115,18 +121,27 @@ public class AnimationAndMovementController : MonoBehaviour
         isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
     }
 
-    private float getGravity()
+    private float getGravity(bool isFalling = false)
     {
-        // TODO: serialize timeToFall so it's tweakable in editor
-        float timeToFall = maxJumpTime / 2;
+        float timeToFall = isFalling ? jumpTimeToFall : jumpTimeToApex;
+
         return (-2 * maxJumpHeight) / Mathf.Pow(timeToFall, 2);
     }
 
     private float getJumpVelocity()
     {
-        // TODO: serialize timeToApex so it's tweakable in editor
-        float timeToApex = maxJumpTime / 2;
-        return (2 * maxJumpHeight) / timeToApex;
+        return (2 * maxJumpHeight) / jumpTimeToApex;
+    }
+
+    private float getSpeedMultiplier()
+    {
+        return isRunPressed ? runMultiplier : walkMultiplier;
+    }
+
+    private void cancelJump()
+    {
+        currentMovement.y = 0;
+        animator.SetBool(isFallingHash, true);
     }
 
     private void handleAnimation()
@@ -158,10 +173,10 @@ public class AnimationAndMovementController : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
+            animator.SetBool(isFallingHash, false);
             if (isJumpAnimating)
             {
                 animator.SetBool(isJumpingHash, false);
-                animator.SetBool(isFallingHash, false);
                 isJumpAnimating = false;
             }
 
@@ -169,24 +184,29 @@ public class AnimationAndMovementController : MonoBehaviour
         }
         else
         {
+            float gravity;
+            float previousVelocityY = currentMovement.y;
 
-            float previousYVelocity = currentMovement.y;
-            float newYVelocity = currentMovement.y + (getGravity() * Time.deltaTime);
-            float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
-            currentMovement.y = nextYVelocity;
-
-            Debug.Log(nextYVelocity);
-            if (previousYVelocity > 10 && nextYVelocity < 10)
+            if (previousVelocityY < FALL_THRESHOLD)
             {
+                gravity = getGravity(true);
                 animator.SetBool(isFallingHash, true);
             }
+            else
+            {
+                gravity = getGravity();
+            }
+
+            float newVelocityY = currentMovement.y + (getGravity() * Time.deltaTime);
+            float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
+            currentMovement.y = nextVelocityY;
         }
     }
 
     private void handleJump()
     {
         bool shouldJump = !isJumping && characterController.isGrounded && isJumpPressed;
-        bool hasLanded = !isJumpPressed && isJumping && characterController.isGrounded;
+        bool hasLanded = isJumping && characterController.isGrounded && !isJumpPressed;
 
         if (shouldJump)
         {
@@ -203,6 +223,8 @@ public class AnimationAndMovementController : MonoBehaviour
 
     private void move()
     {
+        float speedMultiplier = getSpeedMultiplier();
+
         Vector3 motion = new Vector3(
             currentMovement.x * speedMultiplier,
             currentMovement.y,
