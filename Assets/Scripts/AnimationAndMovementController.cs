@@ -32,7 +32,7 @@ public class AnimationAndMovementController : MonoBehaviour
     bool isRunPressed;
 
     // Constants
-    float rotationFactorPerFrame = 15.0f;
+    public float rotationFactorPerFrame = 15.0f;
     int zero = 0;
     float gravity;
     float groundedGravity = -.05f;
@@ -152,20 +152,17 @@ public class AnimationAndMovementController : MonoBehaviour
 
     private void handleRotation()
     {
-        Vector3 positionToLookAt;
-        // The change in position the character should point to
-        positionToLookAt.x = currentMovement.x;
-        positionToLookAt.y = zero;
-        positionToLookAt.z = currentMovement.z;
-
-        // Current rotation of character
         Quaternion currentRotation = transform.rotation;
+        Vector3 positionToLookAt = Camera.main.transform.TransformVector(currentMovement);
+        // The change in position the character should point to
+        positionToLookAt.y = zero;
+
 
         if (isMovementPressed)
         {
             // Creates new rotation based on where the player is currently pressing
-            Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
-            transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
+            transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
         }
     }
 
@@ -225,12 +222,21 @@ public class AnimationAndMovementController : MonoBehaviour
     {
         float speedMultiplier = getSpeedMultiplier();
 
-        Vector3 motion = new Vector3(
-            currentMovement.x * speedMultiplier,
-            currentMovement.y,
-            currentMovement.z * speedMultiplier
-        );
+        // Convert horizontal input to worldspace
+        Vector3 cameraRelativeMotion = currentMovement;
 
-        characterController.Move(motion * Time.deltaTime);
+        // apply horizontal speed multiplers
+        cameraRelativeMotion.x *= speedMultiplier;
+        cameraRelativeMotion.z *= speedMultiplier;
+
+        // translate to camera relative direction
+        cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+
+        // restore original gravity value
+        cameraRelativeMotion.y = currentMovement.y;
+
+        // Move
+        characterController.Move(cameraRelativeMotion * Time.deltaTime);
+
     }
 }
