@@ -5,14 +5,14 @@ public class AnimationAndMovementController : MonoBehaviour
     // Interface variables
     [Header("Speed Multipliers")]
     [SerializeField] private float walkMultiplier = 3.0f;
-    [SerializeField] private float runMultiplier = 7.0f;
+    [SerializeField] private float runMultiplier = 8.0f;
 
     [Header("Jump Parameters")]
     [SerializeField] private float maxJumpHeight = 6.0f;
     [SerializeField] private float jumpTimeToApex = 0.45f;
     [SerializeField] private float jumpTimeToFall = 0.2f;
     [Tooltip("Distance before fall animation is triggered")]
-    [SerializeField] private float fallHeight = 0.1f;
+    [SerializeField] private float fallHeight = 0.075f;
 
     // Declare reference variables
     PlayerInput playerInput;
