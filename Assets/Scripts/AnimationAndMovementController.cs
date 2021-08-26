@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class AnimationAndMovementController : MonoBehaviour
@@ -13,6 +11,8 @@ public class AnimationAndMovementController : MonoBehaviour
     [SerializeField] private float maxJumpHeight = 6.0f;
     [SerializeField] private float jumpTimeToApex = 0.45f;
     [SerializeField] private float jumpTimeToFall = 0.2f;
+    [Tooltip("Distance before fall animation is triggered")]
+    [SerializeField] private float fallHeight = 0.1f;
 
     // Declare reference variables
     PlayerInput playerInput;
@@ -37,13 +37,12 @@ public class AnimationAndMovementController : MonoBehaviour
     int zero = 0;
     float gravity;
     float groundedGravity = -.05f;
-    float FALL_THRESHOLD = -2f;
 
     // Jumping variables
-
     bool isJumpPressed = false;
     bool isJumping = false;
     bool isJumpAnimating = false;
+    float previousHeight;
 
     void Awake()
     {
@@ -55,10 +54,8 @@ public class AnimationAndMovementController : MonoBehaviour
 
     void Update()
     {
-        handleAnimation();
-        handleRotation();
-        handleGravity();
-        handleJump();
+        applyGravity();
+        jump();
         move();
     }
 
@@ -105,7 +102,6 @@ public class AnimationAndMovementController : MonoBehaviour
     void onJump(InputAction.CallbackContext context)
     {
         isJumpPressed = context.ReadValueAsButton();
-
         if (context.phase == InputActionPhase.Canceled) cancelJump();
     }
 
@@ -122,9 +118,9 @@ public class AnimationAndMovementController : MonoBehaviour
         isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
     }
 
-    private float getGravity(bool isFalling = false)
+    private float getGravity()
     {
-        float timeToFall = isFalling ? jumpTimeToFall : jumpTimeToApex;
+        float timeToFall = isFalling() ? jumpTimeToFall : jumpTimeToApex;
 
         return (-2 * maxJumpHeight) / Mathf.Pow(timeToFall, 2);
     }
@@ -139,39 +135,31 @@ public class AnimationAndMovementController : MonoBehaviour
         return isRunPressed ? runMultiplier : walkMultiplier;
     }
 
-    private void cancelJump()
-    {
-        currentMovement.y = 0;
-        animator.SetBool(isFallingHash, true);
-    }
-
-    private void handleAnimation()
+    private void animateMove()
     {
         animator.SetBool("isMoving", isMovementPressed);
         animator.SetBool("isRunning", isRunPressed);
     }
 
-    private void handleRotation()
+    private void rotate()
     {
+        if (!isMovementPressed) return;
+
         Quaternion currentRotation = transform.rotation;
         Vector3 positionToLookAt = Camera.main.transform.TransformVector(currentMovement);
-        // The change in position the character should point to
         positionToLookAt.y = zero;
 
-
-        if (isMovementPressed)
-        {
-            // Creates new rotation based on where the player is currently pressing
-            Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
-            transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
-        }
+        // Creates new rotation based on where the player is currently pressing
+        Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
+        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
     }
 
-    private void handleGravity()
+    private void applyGravity()
     {
+        animateFall();
+
         if (characterController.isGrounded)
         {
-            animator.SetBool(isFallingHash, false);
             if (isJumpAnimating)
             {
                 animator.SetBool(isJumpingHash, false);
@@ -182,26 +170,27 @@ public class AnimationAndMovementController : MonoBehaviour
         }
         else
         {
-            float gravity;
             float previousVelocityY = currentVerticalMovement.y;
-
-            if (previousVelocityY < FALL_THRESHOLD)
-            {
-                gravity = getGravity(true);
-                animator.SetBool(isFallingHash, true);
-            }
-            else
-            {
-                gravity = getGravity();
-            }
-
             float newVelocityY = currentVerticalMovement.y + (getGravity() * Time.deltaTime);
             float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
+
             currentVerticalMovement.y = nextVelocityY;
         }
+
+        previousHeight = transform.position.y;
     }
 
-    private void handleJump()
+    private bool isFalling()
+    {
+        return previousHeight - transform.position.y > fallHeight;
+    }
+
+    private void animateFall()
+    {
+        animator.SetBool(isFallingHash, isFalling());
+    }
+
+    private void jump()
     {
         bool shouldJump = !isJumping && characterController.isGrounded && isJumpPressed;
         bool hasLanded = isJumping && characterController.isGrounded && !isJumpPressed;
@@ -217,6 +206,11 @@ public class AnimationAndMovementController : MonoBehaviour
         {
             isJumping = false;
         }
+    }
+
+    private void cancelJump()
+    {
+        currentVerticalMovement.y = 0;
     }
 
     private void move()
@@ -237,5 +231,8 @@ public class AnimationAndMovementController : MonoBehaviour
         cameraRelativeMotion += currentVerticalMovement;
 
         characterController.Move(cameraRelativeMotion * Time.deltaTime);
+
+        rotate();
+        animateMove();
     }
 }
