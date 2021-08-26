@@ -27,6 +27,7 @@ public class AnimationAndMovementController : MonoBehaviour
 
     // Variables to store player input values
     Vector3 currentMovementInput;
+    Vector3 currentVerticalMovement = new Vector3();
     Vector3 currentMovement;
     bool isMovementPressed;
     bool isRunPressed;
@@ -177,12 +178,12 @@ public class AnimationAndMovementController : MonoBehaviour
                 isJumpAnimating = false;
             }
 
-            currentMovement.y = groundedGravity;
+            currentVerticalMovement.y = groundedGravity;
         }
         else
         {
             float gravity;
-            float previousVelocityY = currentMovement.y;
+            float previousVelocityY = currentVerticalMovement.y;
 
             if (previousVelocityY < FALL_THRESHOLD)
             {
@@ -194,9 +195,9 @@ public class AnimationAndMovementController : MonoBehaviour
                 gravity = getGravity();
             }
 
-            float newVelocityY = currentMovement.y + (getGravity() * Time.deltaTime);
+            float newVelocityY = currentVerticalMovement.y + (getGravity() * Time.deltaTime);
             float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
-            currentMovement.y = nextVelocityY;
+            currentVerticalMovement.y = nextVelocityY;
         }
     }
 
@@ -210,7 +211,7 @@ public class AnimationAndMovementController : MonoBehaviour
             animator.SetBool(isJumpingHash, true);
             isJumpAnimating = true;
             isJumping = true;
-            currentMovement.y = getJumpVelocity();
+            currentVerticalMovement.y = getJumpVelocity();
         }
         else if (hasLanded)
         {
@@ -232,11 +233,9 @@ public class AnimationAndMovementController : MonoBehaviour
         // translate to camera relative direction
         cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
 
-        // restore original gravity value
-        cameraRelativeMotion.y = currentMovement.y;
+        // apply jump/gravity
+        cameraRelativeMotion += currentVerticalMovement;
 
-        // Move
         characterController.Move(cameraRelativeMotion * Time.deltaTime);
-
     }
 }
