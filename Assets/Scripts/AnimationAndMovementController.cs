@@ -20,7 +20,6 @@ public class AnimationAndMovementController : MonoBehaviour
   PlayerInput playerInput;
   CharacterController characterController;
   Animator animator;
-
   InteractableController interactableController;
 
   // Variables to store optimized setter/getter parameter IDs
@@ -51,9 +50,7 @@ public class AnimationAndMovementController : MonoBehaviour
   // Interact
   public bool isInteractPressed = false;
   GameObject interactedObject;
-  bool isInteracting = false;
   bool shouldInteract = false;
-  bool hasInteractionCompleted;
 
   void Awake()
   {
@@ -239,16 +236,12 @@ public class AnimationAndMovementController : MonoBehaviour
 
     shouldInteract = isInteractPressed && interactableController != null && interactedObject != null;
 
-    if (shouldInteract & !isInteracting)
+    if (shouldInteract)
     {
       interactableController.HandleInteraction();
-      isInteracting = true;
       isInteractPressed = false;
     }
-    else
-    {
-      isInteracting = false;
-    }
+
   }
 
   // To-do: This should probably be updated to a method that tests proximity to an interactable

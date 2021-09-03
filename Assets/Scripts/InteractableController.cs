@@ -9,6 +9,7 @@ public class InteractableController : MonoBehaviour
   public Canvas interactionTip;
   public string interactionTipText;
   public bool allowMultipleInteractions = false;
+  IrritationBar irritationBar;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -18,6 +19,8 @@ public class InteractableController : MonoBehaviour
   }
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   Canvas interactionTipInstance;
+
+  NonPlayerController reactingNPC;
 
   void Awake()
   {
@@ -63,7 +66,7 @@ public class InteractableController : MonoBehaviour
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
     {
-      handleUpdateIrritation(irritation.nonPlayerController, irritation.irritationModifier);
+      setIrritationScore(irritation);
     }
     // Set the game object to inactive & destroy the interaction tool tip
     if (!allowMultipleInteractions)
@@ -73,9 +76,30 @@ public class InteractableController : MonoBehaviour
     }
   }
 
-  // Uses BroadcastMessage to send irritation to specific NPC
-  public void handleUpdateIrritation(NonPlayerController nonPlayerController, float irritationModifier)
+  // UpdateIrritation triggered by InteractableController
+  void setIrritationScore(IrritationReaction irritation)
   {
-    nonPlayerController.BroadcastMessage("UpdateIrritation", irritationModifier);
+    reactingNPC = irritation.nonPlayerController;
+    irritationBar = reactingNPC.irritationBar;
+
+    Transform npc = reactingNPC.transform;
+    FieldOfView fieldOfView = npc.GetComponent(typeof(FieldOfView)) as FieldOfView;
+    float newIrritationScore = reactingNPC.irritationScore + irritation.irritationModifier;
+
+    if (fieldOfView.visibleInteractables.Contains(this.transform))
+    {
+      Debug.Log($"{npc.name} saw you messing with {this}!");
+
+      // Update score if within threshold
+      if (newIrritationScore >= reactingNPC.minIrritation && newIrritationScore <= reactingNPC.maxIrritation)
+      {
+        reactingNPC.irritationScore += irritation.irritationModifier;
+        irritationBar.UpdateIrritationBar();
+      }
+    }
+    else
+    {
+      Debug.Log($"{npc.name} didn't see you messing with {this}...");
+    }
   }
 }
