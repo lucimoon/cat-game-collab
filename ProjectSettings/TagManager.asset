@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Interactable
+  - InteractionTip
+  - InteractionText
   layers:
   - Default
   - TransparentFX
@@ -13,9 +15,9 @@ TagManager:
   - Water
   - UI
   - Post Processing
-  - 
-  - 
-  - 
+  - WhatIsScene
+  - WhatIsPlayer
+  - WhatIsInteractable
   - 
   - 
   - 
