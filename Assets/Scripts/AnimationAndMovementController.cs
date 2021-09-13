@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,6 +20,7 @@ public class AnimationAndMovementController : MonoBehaviour
   CharacterController characterController;
   Animator animator;
   InteractableController interactableController;
+  InteractionUIController interactionUIController;
 
   // Variables to store optimized setter/getter parameter IDs
   int isFallingHash;
@@ -48,9 +48,11 @@ public class AnimationAndMovementController : MonoBehaviour
   float previousHeight;
 
   // Interact
-  public bool isInteractPressed = false;
+  public bool isInteractPressed;
+  InputAction interactAction;
   GameObject interactedObject;
-  bool shouldInteract = false;
+
+  public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
   void Awake()
   {
@@ -87,6 +89,17 @@ public class AnimationAndMovementController : MonoBehaviour
     playerInput.CharacterControls.Run.canceled += onRun;
     playerInput.CharacterControls.Jump.started += onJump;
     playerInput.CharacterControls.Jump.canceled += onJump;
+
+    // Under interaction umbrella
+    playerInput.CharacterControls.UsePaw.performed += onInteract;
+    playerInput.CharacterControls.UsePaw.canceled += onInteract;
+    interactionBindings.Add("UsePaw", playerInput.CharacterControls.UsePaw.GetBindingDisplayString(0));
+    playerInput.CharacterControls.UseMouth.performed += onInteract;
+    playerInput.CharacterControls.UseMouth.canceled += onInteract;
+    interactionBindings.Add("UseMouth", playerInput.CharacterControls.UseMouth.GetBindingDisplayString(0));
+    playerInput.CharacterControls.UseBody.performed += onInteract;
+    playerInput.CharacterControls.UseBody.canceled += onInteract;
+    interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
   }
 
   void initAnimatorReferences()
@@ -117,6 +130,12 @@ public class AnimationAndMovementController : MonoBehaviour
   void onRun(InputAction.CallbackContext context)
   {
     isRunPressed = context.ReadValueAsButton();
+  }
+
+  void onInteract(InputAction.CallbackContext context)
+  {
+    interactAction = context.action;
+    isInteractPressed = context.performed;
   }
 
   void onMovementInput(InputAction.CallbackContext context)
@@ -224,25 +243,28 @@ public class AnimationAndMovementController : MonoBehaviour
 
   private void interact()
   {
-    // Not using the new system here as we don't need to detect anything more complicated that a simple key press for interactions
-    if (Keyboard.current.eKey.wasPressedThisFrame)
-    {
-      isInteractPressed = true;
-    }
-    else
-    {
-      isInteractPressed = false;
-    }
 
-    shouldInteract = isInteractPressed && interactableController != null && interactedObject != null;
-
-    if (shouldInteract)
+    if (interactAction != null && interactAction.triggered && isInteractPressed)
     {
-      interactableController.HandleInteraction();
-      isInteractPressed = false;
+      // Todo
+      // Need more conditionals here
+      // Handle appropriate interactions & animations
+      // Limit interaction options to the ones listed in the object being interacted with
+      if (interactedObject != null)
+      {
+        interactableController.HandleInteraction();
+      }
+      else
+      {
+        // handle non-object scene interactions
+        // like sitting or meowing
+      }
     }
-
   }
+
+  private void onUsePaw() { Debug.Log("Paw"); }
+  private void onUseMouth() { Debug.Log("Mouth"); }
+  private void onUseBody() { Debug.Log("Body"); }
 
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
@@ -252,15 +274,17 @@ public class AnimationAndMovementController : MonoBehaviour
     {
       // Set our script reference to our newly collided interactable gameobject
       interactableController = interactedObject.GetComponent(typeof(InteractableController)) as InteractableController;
+      interactionUIController = interactedObject.GetComponent(typeof(InteractionUIController)) as InteractionUIController;
+
       // Show the interaction tool tip
-      if (interactableController.interactionTip != null) interactableController.ShowInteractionTip(true);
+      interactionUIController.ShowInteractionTip(true);
     }
   }
 
   void OnTriggerExit()
   {
     // Hide the interaction tool tip
-    if (interactableController.interactionTip != null) interactableController.ShowInteractionTip(false);
+    interactionUIController.ShowInteractionTip(false);
     // When we leave, set the current interactable to null.
     interactedObject = null;
   }

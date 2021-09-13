@@ -1817,6 +1817,7 @@ GameObject:
   - component: {fileID: 717843653}
   - component: {fileID: 717843652}
   - component: {fileID: 717843651}
+  - component: {fileID: 717843656}
   m_Layer: 9
   m_Name: Interactable_03
   m_TagString: Interactable
@@ -1850,8 +1851,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffed8314997241b99f2111f33f3408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionTip: {fileID: 3989325174391683969, guid: 0205794863cf14a32a8eace20173d72b, type: 3}
-  interactionTipText: Pee on it!
   allowMultipleInteractions: 1
   irritationReactionList:
   - nonPlayerController: {fileID: 693635565}
@@ -1937,6 +1936,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 717843649}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &717843656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717843649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c18f1520bf734a449d85209139ce51b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionOptionList:
+  - interactionTipText: Bite it
+    interactionAction: 1
 --- !u!1 &891499416
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,6 +2035,7 @@ GameObject:
   - component: {fileID: 960664680}
   - component: {fileID: 960664679}
   - component: {fileID: 960664678}
+  - component: {fileID: 960664683}
   m_Layer: 9
   m_Name: Interactable_02
   m_TagString: Interactable
@@ -2054,8 +2069,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffed8314997241b99f2111f33f3408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionTip: {fileID: 3989325174391683969, guid: 0205794863cf14a32a8eace20173d72b, type: 3}
-  interactionTipText: Do something adorable
   allowMultipleInteractions: 0
   irritationReactionList:
   - nonPlayerController: {fileID: 693635565}
@@ -2141,6 +2154,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960664676}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &960664683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960664676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c18f1520bf734a449d85209139ce51b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionOptionList:
+  - interactionTipText: Use Paw
+    interactionAction: 0
+  - interactionTipText: Use Body
+    interactionAction: 2
 --- !u!1 &1177641273 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6743409719003435188, guid: f22a0e05652314e46a2eb8290671ac3b, type: 3}
@@ -3123,8 +3153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffed8314997241b99f2111f33f3408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionTip: {fileID: 3989325174391683969, guid: 0205794863cf14a32a8eace20173d72b, type: 3}
-  interactionTipText: Knock them over
   allowMultipleInteractions: 0
   irritationReactionList:
   - nonPlayerController: {fileID: 693635565}
@@ -3611,6 +3639,7 @@ GameObject:
   - component: {fileID: 2106788988}
   - component: {fileID: 2106788992}
   - component: {fileID: 2106788991}
+  - component: {fileID: 2106788993}
   m_Layer: 9
   m_Name: Interactable_01
   m_TagString: Interactable
@@ -3626,7 +3655,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2106788986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.73, y: 1.4, z: 19.81}
+  m_LocalPosition: {x: 2.73, y: 0.02, z: 0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 891499417}
@@ -3707,8 +3736,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffed8314997241b99f2111f33f3408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionTip: {fileID: 3989325174391683969, guid: 0205794863cf14a32a8eace20173d72b, type: 3}
-  interactionTipText: Scratch the heck out of it
   allowMultipleInteractions: 0
   irritationReactionList:
   - nonPlayerController: {fileID: 693635565}
@@ -3731,6 +3758,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2106788993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106788986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c18f1520bf734a449d85209139ce51b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionOptionList:
+  - interactionTipText: Foo
+    interactionAction: 0
+  - interactionTipText: Bar
+    interactionAction: 1
+  - interactionTipText: Baz
+    interactionAction: 2
 --- !u!1001 &7406620650195260626
 PrefabInstance:
   m_ObjectHideFlags: 0

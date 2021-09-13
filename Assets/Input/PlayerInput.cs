@@ -43,12 +43,28 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Interact"",
+                    ""name"": ""UsePaw"",
                     ""type"": ""Button"",
                     ""id"": ""72e4e537-3038-4d07-bba5-f718beee1a4b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press""
+                    ""interactions"": ""Tap""
+                },
+                {
+                    ""name"": ""UseMouth"",
+                    ""type"": ""Button"",
+                    ""id"": ""7a280b4f-0fa9-41ee-8b80-fabceff90fb5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
+                },
+                {
+                    ""name"": ""UseBody"",
+                    ""type"": ""Button"",
+                    ""id"": ""bef500e9-3595-4193-89e0-bbda1ab8ce88"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
                 }
             ],
             ""bindings"": [
@@ -169,7 +185,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Interact"",
+                    ""action"": ""UsePaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -180,7 +196,51 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Interact"",
+                    ""action"": ""UsePaw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""634f2cff-d530-468e-beba-542da27f28e8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseMouth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67240661-d075-4b2b-b7b0-6595c04d3b75"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseMouth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e6d10a07-2c92-4618-a6de-dfb4b81e73bd"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseBody"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""768c5dd8-5321-4938-a7b9-72bd3f9c466e"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseBody"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -221,7 +281,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         m_CharacterControls_Move = m_CharacterControls.FindAction("Move", throwIfNotFound: true);
         m_CharacterControls_Run = m_CharacterControls.FindAction("Run", throwIfNotFound: true);
         m_CharacterControls_Jump = m_CharacterControls.FindAction("Jump", throwIfNotFound: true);
-        m_CharacterControls_Interact = m_CharacterControls.FindAction("Interact", throwIfNotFound: true);
+        m_CharacterControls_UsePaw = m_CharacterControls.FindAction("UsePaw", throwIfNotFound: true);
+        m_CharacterControls_UseMouth = m_CharacterControls.FindAction("UseMouth", throwIfNotFound: true);
+        m_CharacterControls_UseBody = m_CharacterControls.FindAction("UseBody", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
@@ -277,7 +339,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     private readonly InputAction m_CharacterControls_Move;
     private readonly InputAction m_CharacterControls_Run;
     private readonly InputAction m_CharacterControls_Jump;
-    private readonly InputAction m_CharacterControls_Interact;
+    private readonly InputAction m_CharacterControls_UsePaw;
+    private readonly InputAction m_CharacterControls_UseMouth;
+    private readonly InputAction m_CharacterControls_UseBody;
     public struct CharacterControlsActions
     {
         private @PlayerInput m_Wrapper;
@@ -285,7 +349,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         public InputAction @Move => m_Wrapper.m_CharacterControls_Move;
         public InputAction @Run => m_Wrapper.m_CharacterControls_Run;
         public InputAction @Jump => m_Wrapper.m_CharacterControls_Jump;
-        public InputAction @Interact => m_Wrapper.m_CharacterControls_Interact;
+        public InputAction @UsePaw => m_Wrapper.m_CharacterControls_UsePaw;
+        public InputAction @UseMouth => m_Wrapper.m_CharacterControls_UseMouth;
+        public InputAction @UseBody => m_Wrapper.m_CharacterControls_UseBody;
         public InputActionMap Get() { return m_Wrapper.m_CharacterControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -304,9 +370,15 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnJump;
-                @Interact.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnInteract;
-                @Interact.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnInteract;
-                @Interact.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnInteract;
+                @UsePaw.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUsePaw;
+                @UsePaw.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUsePaw;
+                @UsePaw.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUsePaw;
+                @UseMouth.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseMouth;
+                @UseMouth.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseMouth;
+                @UseMouth.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseMouth;
+                @UseBody.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
+                @UseBody.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
+                @UseBody.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
             }
             m_Wrapper.m_CharacterControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -320,9 +392,15 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @Interact.started += instance.OnInteract;
-                @Interact.performed += instance.OnInteract;
-                @Interact.canceled += instance.OnInteract;
+                @UsePaw.started += instance.OnUsePaw;
+                @UsePaw.performed += instance.OnUsePaw;
+                @UsePaw.canceled += instance.OnUsePaw;
+                @UseMouth.started += instance.OnUseMouth;
+                @UseMouth.performed += instance.OnUseMouth;
+                @UseMouth.canceled += instance.OnUseMouth;
+                @UseBody.started += instance.OnUseBody;
+                @UseBody.performed += instance.OnUseBody;
+                @UseBody.canceled += instance.OnUseBody;
             }
         }
     }
@@ -365,7 +443,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnInteract(InputAction.CallbackContext context);
+        void OnUsePaw(InputAction.CallbackContext context);
+        void OnUseMouth(InputAction.CallbackContext context);
+        void OnUseBody(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
