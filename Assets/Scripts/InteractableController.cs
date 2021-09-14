@@ -1,13 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class InteractableController : MonoBehaviour
 {
-  // Prefab reference
-  public Canvas interactionTip;
-  public string interactionTipText;
   public bool allowMultipleInteractions = false;
   IrritationBar irritationBar;
 
@@ -18,48 +13,7 @@ public class InteractableController : MonoBehaviour
     public float irritationModifier;
   }
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
-  Canvas interactionTipInstance;
-
   NonPlayerController reactingNPC;
-
-  void Awake()
-  {
-    initInteractionTip();
-  }
-
-  void initInteractionTip()
-  {
-    if (interactionTip != null)
-    {
-      // Set position of interaction tool tip (attempt here to take into account size of object + camera position)
-      Quaternion rotation = Camera.main.transform.rotation;
-      Vector3 position = gameObject.transform.position;
-      position.y = gameObject.transform.localScale.y + position.y;
-      position.x = gameObject.transform.localScale.x + position.x;
-      position.z = gameObject.transform.localScale.z + position.z;
-
-      // Create new instance of tool tip based on prefab
-      interactionTipInstance = Instantiate(interactionTip, position, rotation);
-      interactionTipInstance.gameObject.SetActive(false);
-
-      SetInteractionTipText();
-    }
-  }
-
-  // Set the instructional interaction tool tip text
-  void SetInteractionTipText()
-  {
-    TextMeshProUGUI tipDisplayText = interactionTipInstance.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-    tipDisplayText.text = interactionTipText;
-  }
-
-  public void ShowInteractionTip(bool isVisible)
-  {
-    if (interactionTipInstance != null)
-    {
-      interactionTipInstance.gameObject.SetActive(isVisible);
-    }
-  }
 
   public void HandleInteraction()
   {
@@ -71,9 +25,11 @@ public class InteractableController : MonoBehaviour
     // Set the game object to inactive & destroy the interaction tool tip
     if (!allowMultipleInteractions)
     {
+      // Todo: Make sure that interaction tip is also destroyed/set inactive
       gameObject.SetActive(false);
-      Destroy(interactionTipInstance.gameObject);
     }
+
+    // Todo: Setup max interactions
   }
 
   // UpdateIrritation triggered by InteractableController

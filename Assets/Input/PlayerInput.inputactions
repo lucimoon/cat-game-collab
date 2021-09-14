@@ -30,12 +30,28 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Interact",
+                    "name": "UsePaw",
                     "type": "Button",
                     "id": "72e4e537-3038-4d07-bba5-f718beee1a4b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press"
+                    "interactions": "Tap"
+                },
+                {
+                    "name": "UseMouth",
+                    "type": "Button",
+                    "id": "7a280b4f-0fa9-41ee-8b80-fabceff90fb5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap"
+                },
+                {
+                    "name": "UseBody",
+                    "type": "Button",
+                    "id": "bef500e9-3595-4193-89e0-bbda1ab8ce88",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap"
                 }
             ],
             "bindings": [
@@ -156,7 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "UsePaw",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -167,7 +183,51 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "UsePaw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "634f2cff-d530-468e-beba-542da27f28e8",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseMouth",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "67240661-d075-4b2b-b7b0-6595c04d3b75",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseMouth",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e6d10a07-2c92-4618-a6de-dfb4b81e73bd",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseBody",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "768c5dd8-5321-4938-a7b9-72bd3f9c466e",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseBody",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
