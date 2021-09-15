@@ -5,6 +5,7 @@ public class Interactable : MonoBehaviour
 {
   public bool allowMultipleInteractions = false;
   IrritationBar irritationBar;
+  InteractableUI interactableUI;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -14,6 +15,11 @@ public class Interactable : MonoBehaviour
   }
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   NonPlayerController reactingNPC;
+
+  void Start()
+  {
+    interactableUI = GetComponent<InteractableUI>();
+  }
 
   public void HandleInteraction(InteractionType interactionType)
   {
@@ -34,9 +40,6 @@ public class Interactable : MonoBehaviour
     {
       case InteractionType.UseBody:
         BodyInteraction();
-        break;
-      case InteractionType.UseMouth:
-        MouthInteraction();
         break;
       case InteractionType.UsePaw:
         PawInteraction();
@@ -87,5 +90,15 @@ public class Interactable : MonoBehaviour
   protected virtual void BodyInteraction()
   {
     Debug.Log("BodyInteraction");
+  }
+
+  public void ShowTooltip()
+  {
+    interactableUI.ShowInteractionTip(true);
+  }
+
+  public void HideTooltip()
+  {
+    interactableUI.ShowInteractionTip(true);
   }
 }

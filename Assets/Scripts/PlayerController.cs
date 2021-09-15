@@ -51,7 +51,6 @@ public class PlayerController : MonoBehaviour
   // Interact
   public bool isInteractPressed;
   InputAction interactAction;
-  GameObject interactedObject;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
@@ -260,15 +259,13 @@ public class PlayerController : MonoBehaviour
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
   {
-    interactedObject = other.gameObject;
+    GameObject interactedObject = other.gameObject;
+
     if (interactedObject.CompareTag("Interactable"))
     {
       // Set our script reference to our newly collided interactable gameobject
-      interactable = interactedObject.GetComponent(typeof(Interactable)) as Interactable;
-      interactableUI = interactedObject.GetComponent(typeof(InteractableUI)) as InteractableUI;
-
-      // Show the interaction tool tip
-      interactableUI.ShowInteractionTip(true);
+      interactable = interactedObject.GetComponent<Interactable>();
+      interactable.ShowTooltip();
     }
   }
 
@@ -276,9 +273,8 @@ public class PlayerController : MonoBehaviour
   {
     // Note: This isn't triggered when Interactable in question is destroyed
     // Hide the interaction tool tip
-    if (interactableUI != null) interactableUI.ShowInteractionTip(false);
+    if (interactableUI != null) interactable.HideTooltip();
     // When we leave, set the current interactable references to null.
-    interactedObject = null;
     interactable = null;
     interactableUI = null;
   }
@@ -341,7 +337,16 @@ public class PlayerController : MonoBehaviour
     }
   }
 
+  // Default behaviors
+
+  private void Meow()
+  {
+    Debug.Log("Meow");
+    // Default Animation and Audio lives here...
+  }
+
   private void UsePaw() { Debug.Log("UsePaw"); }
-  private void Meow() { Debug.Log("Meow"); }
   private void TakeRest() { Debug.Log("TakeRest"); }
+
+  // End Default Behaviors
 }

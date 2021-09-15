@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class InteractableUI : MonoBehaviour
 {
-  PlayerInput m_PlayerInput;
   GameObject player;
   PlayerController playerController;
 
