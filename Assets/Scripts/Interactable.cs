@@ -16,12 +16,16 @@ public class Interactable : MonoBehaviour
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   NonPlayerController reactingNPC;
 
+  [SerializeField] private PlayerAnimation mouthPlayerAnimation;
+  [SerializeField] private PlayerAnimation pawPlayerAnimation;
+  [SerializeField] private PlayerAnimation bodyPlayerAnimation;
+
   void Start()
   {
     interactableUI = GetComponent<InteractableUI>();
   }
 
-  public void HandleInteraction(InteractionType interactionType)
+  public PlayerAnimation HandleInteraction(InteractionType interactionType)
   {
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
@@ -40,13 +44,13 @@ public class Interactable : MonoBehaviour
     {
       case InteractionType.UseBody:
         BodyInteraction();
-        break;
+        return bodyPlayerAnimation;
       case InteractionType.UsePaw:
         PawInteraction();
-        break;
+        return pawPlayerAnimation;
       default:
         MouthInteraction();
-        break;
+        return mouthPlayerAnimation;
     }
   }
 

@@ -1858,6 +1858,9 @@ MonoBehaviour:
     irritationModifier: 10
   - nonPlayerController: {fileID: 230777666}
     irritationModifier: 10
+  mouthPlayerAnimation: 0
+  pawPlayerAnimation: 4
+  bodyPlayerAnimation: 7
   interactionForce: 10
 --- !u!54 &717843652
 Rigidbody:
@@ -2090,6 +2093,9 @@ MonoBehaviour:
     irritationModifier: 10
   - nonPlayerController: {fileID: 230777666}
     irritationModifier: 10
+  mouthPlayerAnimation: 0
+  pawPlayerAnimation: 0
+  bodyPlayerAnimation: 0
 --- !u!54 &960664679
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3174,6 +3180,9 @@ MonoBehaviour:
     irritationModifier: 10
   - nonPlayerController: {fileID: 230777666}
     irritationModifier: 10
+  mouthPlayerAnimation: 0
+  pawPlayerAnimation: 0
+  bodyPlayerAnimation: 0
 --- !u!114 &1812655383 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7406620650235843098, guid: fcfb579b9653b469cb475f0c72a79ea5, type: 3}
@@ -3757,6 +3766,9 @@ MonoBehaviour:
     irritationModifier: 10
   - nonPlayerController: {fileID: 230777666}
     irritationModifier: 10
+  mouthPlayerAnimation: 0
+  pawPlayerAnimation: 0
+  bodyPlayerAnimation: 0
 --- !u!54 &2106788992
 Rigidbody:
   m_ObjectHideFlags: 0

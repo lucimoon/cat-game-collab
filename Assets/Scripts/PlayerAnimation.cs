@@ -1,4 +1,4 @@
-public enum PlayerAnimations
+public enum PlayerAnimation
 {
   Eat,
   Jump,
