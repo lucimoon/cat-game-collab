@@ -103,6 +103,6 @@ public class Interactable : MonoBehaviour
 
   public void HideTooltip()
   {
-    interactableUI.ShowInteractionTip(true);
+    interactableUI.ShowInteractionTip(false);
   }
 }
