@@ -274,10 +274,13 @@ public class PlayerController : MonoBehaviour
 
   void OnTriggerExit()
   {
+    // Note: This isn't triggered when Interactable in question is destroyed
     // Hide the interaction tool tip
-    interactableUI.ShowInteractionTip(false);
-    // When we leave, set the current interactable to null.
+    if (interactableUI != null) interactableUI.ShowInteractionTip(false);
+    // When we leave, set the current interactable references to null.
     interactedObject = null;
+    interactable = null;
+    interactableUI = null;
   }
 
   private void move()

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17683358, g: 0.22135374, b: 0.3036441, a: 1}
+  m_IndirectSpecularColor: {r: 0.17683339, g: 0.22135341, b: 0.30364355, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1950,7 +1950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionOptionList:
   - interactionTipText: Bite it
-    interactionAction: 1
+    interactionType: 1
 --- !u!1 &891499416
 GameObject:
   m_ObjectHideFlags: 0
@@ -2168,9 +2168,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionOptionList:
   - interactionTipText: Use Paw
-    interactionAction: 0
+    interactionType: 0
   - interactionTipText: Use Body
-    interactionAction: 2
+    interactionType: 2
 --- !u!1 &1177641273 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6743409719003435188, guid: f22a0e05652314e46a2eb8290671ac3b, type: 3}
@@ -3772,11 +3772,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionOptionList:
   - interactionTipText: Foo
-    interactionAction: 0
+    interactionType: 0
   - interactionTipText: Bar
-    interactionAction: 1
+    interactionType: 1
   - interactionTipText: Baz
-    interactionAction: 2
+    interactionType: 2
 --- !u!1001 &7406620650195260626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3858,7 +3858,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7406620650235843093, guid: fcfb579b9653b469cb475f0c72a79ea5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -23.100677
+      value: -23.100708
       objectReference: {fileID: 0}
     - target: {fileID: 7406620650235843093, guid: fcfb579b9653b469cb475f0c72a79ea5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
