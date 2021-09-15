@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class AnimationAndMovementController : MonoBehaviour
+
+public class PlayerController : MonoBehaviour
 {
   // Interface variables
   [Header("Speed Multipliers")]
@@ -19,8 +20,7 @@ public class AnimationAndMovementController : MonoBehaviour
   PlayerInput playerInput;
   CharacterController characterController;
   Animator animator;
-  InteractableController interactableController;
-  InteractionUIController interactionUIController;
+  Interactable interactable;
 
   // Variables to store optimized setter/getter parameter IDs
   int isFallingHash;
@@ -50,7 +50,6 @@ public class AnimationAndMovementController : MonoBehaviour
   // Interact
   public bool isInteractPressed;
   InputAction interactAction;
-  GameObject interactedObject;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
@@ -243,50 +242,39 @@ public class AnimationAndMovementController : MonoBehaviour
 
   private void interact()
   {
+    bool shouldInteract = interactAction != null && interactAction.triggered && isInteractPressed;
 
-    if (interactAction != null && interactAction.triggered && isInteractPressed)
+    if (!shouldInteract) return;
+
+    if (interactable != null)
     {
-      // Todo
-      // Need more conditionals here
-      // Handle appropriate interactions & animations
-      // Limit interaction options to the ones listed in the object being interacted with
-      if (interactedObject != null)
-      {
-        interactableController.HandleInteraction();
-      }
-      else
-      {
-        // handle non-object scene interactions
-        // like sitting or meowing
-      }
+      UseObjectInteraction(interactAction.name);
+      return;
     }
-  }
 
-  private void onUsePaw() { Debug.Log("Paw"); }
-  private void onUseMouth() { Debug.Log("Mouth"); }
-  private void onUseBody() { Debug.Log("Body"); }
+    UseDefaultReaction(interactAction.name);
+  }
 
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
   {
-    interactedObject = other.gameObject;
+    GameObject interactedObject = other.gameObject;
+
     if (interactedObject.CompareTag("Interactable"))
     {
       // Set our script reference to our newly collided interactable gameobject
-      interactableController = interactedObject.GetComponent(typeof(InteractableController)) as InteractableController;
-      interactionUIController = interactedObject.GetComponent(typeof(InteractionUIController)) as InteractionUIController;
-
-      // Show the interaction tool tip
-      interactionUIController.ShowInteractionTip(true);
+      interactable = interactedObject.GetComponent<Interactable>();
+      interactable.ShowTooltip();
     }
   }
 
   void OnTriggerExit()
   {
+    // Note: This isn't triggered when Interactable in question is destroyed
     // Hide the interaction tool tip
-    interactionUIController.ShowInteractionTip(false);
-    // When we leave, set the current interactable to null.
-    interactedObject = null;
+    if (interactable != null) interactable.HideTooltip();
+    // When we leave, set the current interactable references to null.
+    interactable = null;
   }
 
   private void move()
@@ -311,4 +299,52 @@ public class AnimationAndMovementController : MonoBehaviour
     rotate();
     animateMove();
   }
+
+  private void UseObjectInteraction(string interactionName)
+  {
+    InteractionType interactionType = InteractionType.UseMouth;
+
+    switch (interactionName)
+    {
+      case "UsePaw":
+        interactionType = InteractionType.UsePaw;
+        break;
+      case "UseBody":
+        interactionType = InteractionType.UseBody;
+        break;
+      default:
+        break;
+    }
+
+    interactable.HandleInteraction(interactionType);
+  }
+
+  private void UseDefaultReaction(string interactionName)
+  {
+    switch (interactionName)
+    {
+      case "UsePaw":
+        UsePaw();
+        break;
+      case "UseBody":
+        TakeRest();
+        break;
+      default:
+        Meow();
+        break;
+    }
+  }
+
+  // Default behaviors
+
+  private void Meow()
+  {
+    Debug.Log("Meow");
+    // Default Animation and Audio lives here...
+  }
+
+  private void UsePaw() { Debug.Log("UsePaw"); }
+  private void TakeRest() { Debug.Log("TakeRest"); }
+
+  // End Default Behaviors
 }

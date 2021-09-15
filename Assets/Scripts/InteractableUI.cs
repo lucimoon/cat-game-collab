@@ -1,20 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractionUIController : MonoBehaviour
+public class InteractableUI : MonoBehaviour
 {
-  PlayerInput m_PlayerInput;
   GameObject player;
-  AnimationAndMovementController animationAndMovementController;
-  // Canvas interactionTipPrefab;
+  PlayerController playerController;
+
   Canvas interactionTipInstance;
-  public enum InteractionAction { UsePaw, UseMouth, UseBody };
 
   [System.Serializable]
   public struct InteractionOption
   {
     public string interactionTipText;
-    public InteractionAction interactionAction;
+    public InteractionType interactionType;
   }
 
   public List<InteractionOption> interactionOptionList = new List<InteractionOption>();
@@ -22,22 +20,15 @@ public class InteractionUIController : MonoBehaviour
 
   void Awake()
   {
-    // initInteractionTip();
     player = GameObject.FindGameObjectWithTag("Player");
-    animationAndMovementController = player.GetComponent<AnimationAndMovementController>();
+    playerController = player.GetComponent<PlayerController>();
   }
 
-  void Start()
-  {
-
-  }
-
-  // Update is called once per frame
   void Update()
   {
     if (interactionBindings == null)
     {
-      interactionBindings = animationAndMovementController.interactionBindings;
+      interactionBindings = playerController.interactionBindings;
       initInteractionTip();
     }
   }
@@ -79,14 +70,14 @@ public class InteractionUIController : MonoBehaviour
 
     tipParentTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 50f * index, tipParentTransform.rect.height);
 
-    tipButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = keyBindingText(interactionOption.interactionAction);
+    tipButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = keyBindingText(interactionOption.interactionType);
     tipDisplayText.GetComponent<TMPro.TextMeshProUGUI>().text = interactionOption.interactionTipText;
   }
 
-  string keyBindingText(InteractionAction interactionAction)
+  string keyBindingText(InteractionType interactionType)
   {
-    if (interactionAction == InteractionAction.UseMouth) return interactionBindings["UseMouth"];
-    if (interactionAction == InteractionAction.UseBody) return interactionBindings["UseBody"];
+    if (interactionType == InteractionType.UseMouth) return interactionBindings["UseMouth"];
+    if (interactionType == InteractionType.UseBody) return interactionBindings["UseBody"];
     return interactionBindings["UsePaw"];
   }
 

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractableController : MonoBehaviour
+public class Interactable : MonoBehaviour
 {
   public bool allowMultipleInteractions = false;
   IrritationBar irritationBar;
+  InteractableUI interactableUI;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -15,7 +16,16 @@ public class InteractableController : MonoBehaviour
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   NonPlayerController reactingNPC;
 
-  public void HandleInteraction()
+  [SerializeField] private PlayerAnimation mouthPlayerAnimation;
+  [SerializeField] private PlayerAnimation pawPlayerAnimation;
+  [SerializeField] private PlayerAnimation bodyPlayerAnimation;
+
+  void Start()
+  {
+    interactableUI = GetComponent<InteractableUI>();
+  }
+
+  public PlayerAnimation HandleInteraction(InteractionType interactionType)
   {
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
@@ -30,6 +40,18 @@ public class InteractableController : MonoBehaviour
     }
 
     // Todo: Setup max interactions
+    switch (interactionType)
+    {
+      case InteractionType.UseBody:
+        BodyInteraction();
+        return bodyPlayerAnimation;
+      case InteractionType.UsePaw:
+        PawInteraction();
+        return pawPlayerAnimation;
+      default:
+        MouthInteraction();
+        return mouthPlayerAnimation;
+    }
   }
 
   // UpdateIrritation triggered by InteractableController
@@ -57,5 +79,30 @@ public class InteractableController : MonoBehaviour
     {
       Debug.Log($"{npc.name} didn't see you messing with {this}...");
     }
+  }
+
+  protected virtual void MouthInteraction()
+  {
+    Debug.Log("MouthInteraction");
+  }
+
+  protected virtual void PawInteraction()
+  {
+    Debug.Log("PawInteraction");
+  }
+
+  protected virtual void BodyInteraction()
+  {
+    Debug.Log("BodyInteraction");
+  }
+
+  public void ShowTooltip()
+  {
+    interactableUI.ShowInteractionTip(true);
+  }
+
+  public void HideTooltip()
+  {
+    interactableUI.ShowInteractionTip(false);
   }
 }
