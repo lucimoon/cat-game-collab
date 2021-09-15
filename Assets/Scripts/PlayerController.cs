@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
   CharacterController characterController;
   Animator animator;
   Interactable interactable;
-  InteractableUI interactableUI;
 
   // Variables to store optimized setter/getter parameter IDs
   int isFallingHash;
@@ -273,10 +272,9 @@ public class PlayerController : MonoBehaviour
   {
     // Note: This isn't triggered when Interactable in question is destroyed
     // Hide the interaction tool tip
-    if (interactableUI != null) interactable.HideTooltip();
+    if (interactable != null) interactable.HideTooltip();
     // When we leave, set the current interactable references to null.
     interactable = null;
-    interactableUI = null;
   }
 
   private void move()
