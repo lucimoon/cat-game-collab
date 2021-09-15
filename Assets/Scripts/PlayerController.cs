@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class AnimationAndMovementController : MonoBehaviour
+
+public class PlayerController : MonoBehaviour
 {
   // Interface variables
   [Header("Speed Multipliers")]
@@ -19,8 +20,8 @@ public class AnimationAndMovementController : MonoBehaviour
   PlayerInput playerInput;
   CharacterController characterController;
   Animator animator;
-  InteractableController interactableController;
-  InteractionUIController interactionUIController;
+  Interactable interactable;
+  InteractableUI interactableUI;
 
   // Variables to store optimized setter/getter parameter IDs
   int isFallingHash;
@@ -252,7 +253,7 @@ public class AnimationAndMovementController : MonoBehaviour
       // Limit interaction options to the ones listed in the object being interacted with
       if (interactedObject != null)
       {
-        interactableController.HandleInteraction();
+        interactable.HandleInteraction();
       }
       else
       {
@@ -273,18 +274,18 @@ public class AnimationAndMovementController : MonoBehaviour
     if (interactedObject.CompareTag("Interactable"))
     {
       // Set our script reference to our newly collided interactable gameobject
-      interactableController = interactedObject.GetComponent(typeof(InteractableController)) as InteractableController;
-      interactionUIController = interactedObject.GetComponent(typeof(InteractionUIController)) as InteractionUIController;
+      interactable = interactedObject.GetComponent(typeof(Interactable)) as Interactable;
+      interactableUI = interactedObject.GetComponent(typeof(InteractableUI)) as InteractableUI;
 
       // Show the interaction tool tip
-      interactionUIController.ShowInteractionTip(true);
+      interactableUI.ShowInteractionTip(true);
     }
   }
 
   void OnTriggerExit()
   {
     // Hide the interaction tool tip
-    interactionUIController.ShowInteractionTip(false);
+    interactableUI.ShowInteractionTip(false);
     // When we leave, set the current interactable to null.
     interactedObject = null;
   }

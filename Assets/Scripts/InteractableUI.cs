@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractionUIController : MonoBehaviour
+public class InteractableUI : MonoBehaviour
 {
   PlayerInput m_PlayerInput;
   GameObject player;
-  AnimationAndMovementController animationAndMovementController;
+  PlayerController playerController;
   // Canvas interactionTipPrefab;
   Canvas interactionTipInstance;
   public enum InteractionAction { UsePaw, UseMouth, UseBody };
@@ -24,7 +24,7 @@ public class InteractionUIController : MonoBehaviour
   {
     // initInteractionTip();
     player = GameObject.FindGameObjectWithTag("Player");
-    animationAndMovementController = player.GetComponent<AnimationAndMovementController>();
+    playerController = player.GetComponent<PlayerController>();
   }
 
   void Start()
@@ -37,7 +37,7 @@ public class InteractionUIController : MonoBehaviour
   {
     if (interactionBindings == null)
     {
-      interactionBindings = animationAndMovementController.interactionBindings;
+      interactionBindings = playerController.interactionBindings;
       initInteractionTip();
     }
   }
