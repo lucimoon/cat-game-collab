@@ -244,28 +244,18 @@ public class PlayerController : MonoBehaviour
 
   private void interact()
   {
+    bool shouldInteract = interactAction != null && interactAction.triggered && isInteractPressed;
 
-    if (interactAction != null && interactAction.triggered && isInteractPressed)
+    if (!shouldInteract) return;
+
+    if (interactable != null)
     {
-      // Todo
-      // Need more conditionals here
-      // Handle appropriate interactions & animations
-      // Limit interaction options to the ones listed in the object being interacted with
-      if (interactedObject != null)
-      {
-        interactable.HandleInteraction();
-      }
-      else
-      {
-        // handle non-object scene interactions
-        // like sitting or meowing
-      }
+      UseObjectInteraction(interactAction.name);
+      return;
     }
-  }
 
-  private void onUsePaw() { Debug.Log("Paw"); }
-  private void onUseMouth() { Debug.Log("Mouth"); }
-  private void onUseBody() { Debug.Log("Body"); }
+    UseDefaultReaction(interactAction.name);
+  }
 
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
@@ -312,4 +302,43 @@ public class PlayerController : MonoBehaviour
     rotate();
     animateMove();
   }
+
+  private void UseObjectInteraction(string interactionName)
+  {
+    InteractionType interactionType = InteractionType.UseMouth;
+
+    switch (interactionName)
+    {
+      case "UsePaw":
+        interactionType = InteractionType.UsePaw;
+        break;
+      case "UseBody":
+        interactionType = InteractionType.UseBody;
+        break;
+      default:
+        break;
+    }
+
+    interactable.HandleInteraction(interactionType);
+  }
+
+  private void UseDefaultReaction(string interactionName)
+  {
+    switch (interactionName)
+    {
+      case "UsePaw":
+        UsePaw();
+        break;
+      case "UseBody":
+        TakeRest();
+        break;
+      default:
+        Meow();
+        break;
+    }
+  }
+
+  private void UsePaw() { Debug.Log("UsePaw"); }
+  private void Meow() { Debug.Log("Meow"); }
+  private void TakeRest() { Debug.Log("TakeRest"); }
 }

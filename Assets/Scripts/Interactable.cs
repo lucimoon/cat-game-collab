@@ -15,7 +15,7 @@ public class Interactable : MonoBehaviour
   public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   NonPlayerController reactingNPC;
 
-  public void HandleInteraction()
+  public void HandleInteraction(InteractionType interactionType)
   {
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
@@ -30,6 +30,21 @@ public class Interactable : MonoBehaviour
     }
 
     // Todo: Setup max interactions
+    switch (interactionType)
+    {
+      case InteractionType.UseBody:
+        BodyInteraction();
+        break;
+      case InteractionType.UseMouth:
+        MouthInteraction();
+        break;
+      case InteractionType.UsePaw:
+        PawInteraction();
+        break;
+      default:
+        MouthInteraction();
+        break;
+    }
   }
 
   // UpdateIrritation triggered by InteractableController
@@ -57,5 +72,20 @@ public class Interactable : MonoBehaviour
     {
       Debug.Log($"{npc.name} didn't see you messing with {this}...");
     }
+  }
+
+  protected virtual void MouthInteraction()
+  {
+    Debug.Log("MouthInteraction");
+  }
+
+  protected virtual void PawInteraction()
+  {
+    Debug.Log("PawInteraction");
+  }
+
+  protected virtual void BodyInteraction()
+  {
+    Debug.Log("BodyInteraction");
   }
 }
