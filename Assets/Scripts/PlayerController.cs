@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class AnimationAndMovementController : MonoBehaviour
+
+public class PlayerController : MonoBehaviour
 {
   // Interface variables
-  [Header("Speed Multipliers")]
+  [Header("Movement Multipliers")]
   [SerializeField] private float walkMultiplier = 3.0f;
   [SerializeField] private float runMultiplier = 8.0f;
+  [SerializeField] private float rotationFactorPerFrame = 15.0f;
 
   [Header("Jump Parameters")]
   [SerializeField] private float maxJumpHeight = 6.0f;
@@ -15,42 +17,42 @@ public class AnimationAndMovementController : MonoBehaviour
   [Tooltip("Distance before fall animation is triggered")]
   [SerializeField] private float fallHeight = 0.075f;
 
+
   // Declare reference variables
-  PlayerInput playerInput;
-  CharacterController characterController;
-  Animator animator;
-  InteractableController interactableController;
-  InteractionUIController interactionUIController;
+  private PlayerInput playerInput;
+  private CharacterController characterController;
+  private Animator animator;
+  private Interactable interactable;
 
   // Variables to store optimized setter/getter parameter IDs
-  int isFallingHash;
-  int isJumpingHash;
-  int isMovingHash;
-  int isRunningHash;
+  private int isFallingHash;
+  private int isJumpingHash;
+  private int isMovingHash;
+  private int isRunningHash;
 
   // Variables to store player input values
-  Vector3 currentMovementInput;
-  Vector3 currentVerticalMovement = new Vector3();
-  Vector3 currentMovement;
-  bool isMovementPressed;
-  bool isRunPressed;
+  private Vector3 currentMovementInput;
+  private Vector3 currentVerticalMovement = new Vector3();
+  private Vector3 currentMovement;
+  private bool isMovementPressed;
+  private bool isRunPressed;
 
   // Constants
-  public float rotationFactorPerFrame = 15.0f;
-  int zero = 0;
-  float gravity;
-  float groundedGravity = -.05f;
+  private int zero = 0;
+  private float gravity;
+  private float groundedGravity = -.05f;
 
   // Jumping variables
-  bool isJumpPressed = false;
-  bool isJumping = false;
-  bool isJumpAnimating = false;
-  float previousHeight;
+  private bool isJumpPressed = false;
+  private bool isJumping = false;
+  private bool isJumpAnimating = false;
+  private float previousHeight;
 
   // Interact
   public bool isInteractPressed;
   InputAction interactAction;
-  GameObject interactedObject;
+
+  private PlayerAudio playerAudio;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
@@ -114,6 +116,7 @@ public class AnimationAndMovementController : MonoBehaviour
   {
     characterController = GetComponent<CharacterController>();
     animator = GetComponent<Animator>();
+    playerAudio = GetComponent<PlayerAudio>();
   }
 
   void initClassInstances()
@@ -220,6 +223,7 @@ public class AnimationAndMovementController : MonoBehaviour
 
   private void jump()
   {
+    // TODO: Replace ground checks with a raycasting solution
     bool shouldJump = !isJumping && characterController.isGrounded && isJumpPressed;
     bool hasLanded = isJumping && characterController.isGrounded && !isJumpPressed;
 
@@ -243,50 +247,39 @@ public class AnimationAndMovementController : MonoBehaviour
 
   private void interact()
   {
+    bool shouldInteract = interactAction != null && interactAction.triggered && isInteractPressed;
 
-    if (interactAction != null && interactAction.triggered && isInteractPressed)
+    if (!shouldInteract) return;
+
+    if (interactable != null)
     {
-      // Todo
-      // Need more conditionals here
-      // Handle appropriate interactions & animations
-      // Limit interaction options to the ones listed in the object being interacted with
-      if (interactedObject != null)
-      {
-        interactableController.HandleInteraction();
-      }
-      else
-      {
-        // handle non-object scene interactions
-        // like sitting or meowing
-      }
+      UseObjectInteraction(interactAction.name);
+      return;
     }
-  }
 
-  private void onUsePaw() { Debug.Log("Paw"); }
-  private void onUseMouth() { Debug.Log("Mouth"); }
-  private void onUseBody() { Debug.Log("Body"); }
+    UseDefaultReaction(interactAction.name);
+  }
 
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
   {
-    interactedObject = other.gameObject;
+    GameObject interactedObject = other.gameObject;
+
     if (interactedObject.CompareTag("Interactable"))
     {
       // Set our script reference to our newly collided interactable gameobject
-      interactableController = interactedObject.GetComponent(typeof(InteractableController)) as InteractableController;
-      interactionUIController = interactedObject.GetComponent(typeof(InteractionUIController)) as InteractionUIController;
-
-      // Show the interaction tool tip
-      interactionUIController.ShowInteractionTip(true);
+      interactable = interactedObject.GetComponent<Interactable>();
+      interactable.ShowTooltip();
     }
   }
 
   void OnTriggerExit()
   {
+    // Note: This isn't triggered when Interactable in question is destroyed
     // Hide the interaction tool tip
-    interactionUIController.ShowInteractionTip(false);
-    // When we leave, set the current interactable to null.
-    interactedObject = null;
+    if (interactable != null) interactable.HideTooltip();
+    // When we leave, set the current interactable references to null.
+    interactable = null;
   }
 
   private void move()
@@ -310,5 +303,75 @@ public class AnimationAndMovementController : MonoBehaviour
 
     rotate();
     animateMove();
+  }
+
+  private void UseObjectInteraction(string interactionName)
+  {
+    InteractionType interactionType = InteractionType.UseMouth;
+
+    switch (interactionName)
+    {
+      case "UsePaw":
+        interactionType = InteractionType.UsePaw;
+        break;
+      case "UseBody":
+        interactionType = InteractionType.UseBody;
+        break;
+      default:
+        break;
+    }
+
+    /*
+    * This may be a weird pattern. We're
+    * sneakily returning a PlayerAnimation from
+    * a method that's called HandleInteraction.
+    * I can't think of a better approach at the moment.
+    */
+    PlayerAnimation animation = interactable.HandleInteraction(interactionType);
+    PlayAnimation(animation);
+  }
+
+  private void UseDefaultReaction(string interactionName)
+  {
+    switch (interactionName)
+    {
+      case "UsePaw":
+        UsePaw();
+        break;
+      case "UseBody":
+        TakeRest();
+        break;
+      default:
+        Meow();
+        break;
+    }
+  }
+
+  // Default behaviors
+
+  private void Meow()
+  {
+    Debug.Log("Meow");
+    // Default Animation and Audio lives here...
+    animator.Play("Meow", -1);
+    playerAudio.PlayMeow();
+  }
+
+  private void UsePaw() { Debug.Log("UsePaw"); }
+  private void TakeRest() { Debug.Log("TakeRest"); }
+
+  // End Default Behaviors
+
+  private void PlayAnimation(PlayerAnimation animation)
+  {
+    // This can be considered complete when all animations in PlayerAnimation are added.
+    switch (animation)
+    {
+      case PlayerAnimation.Nudge:
+        animator.Play("Nudge", -1);
+        break;
+      default:
+        break;
+    }
   }
 }

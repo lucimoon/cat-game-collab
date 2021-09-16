@@ -4,16 +4,36 @@ using UnityEngine;
 
 public class PlayerAudio : MonoBehaviour
 {
-    public AudioSource audioSource;
-    public List<AudioClip> footsteps = new List<AudioClip>();
-    private System.Random random = new System.Random();
+  [SerializeField] private List<AudioClip> footsteps = new List<AudioClip>();
+  [SerializeField] private List<AudioClip> meows = new List<AudioClip>();
+  private AudioSource audioSource;
+  private System.Random random = new System.Random();
 
+  void Start()
+  {
+    audioSource = GetComponent<AudioSource>();
+  }
 
-    public void PlayFootstep()
-    {
-        int randomIndex = random.Next(footsteps.Count);
-        AudioClip footstep = footsteps[randomIndex];
+  public void PlayFootstep()
+  {
+    PlayRandom(footsteps);
+  }
 
-        audioSource.PlayOneShot(footstep);
-    }
+  public void PlayMeow()
+  {
+    PlayRandom(meows);
+  }
+
+  private void SafePlayOneShot(AudioClip clip)
+  {
+    if (clip != null) audioSource.PlayOneShot(clip);
+  }
+
+  private void PlayRandom(List<AudioClip> clips)
+  {
+    int randomIndex = random.Next(clips.Count);
+    AudioClip clip = clips[randomIndex];
+
+    SafePlayOneShot(clip);
+  }
 }
