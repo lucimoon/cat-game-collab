@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Interactable : MonoBehaviour
 {
-  public bool allowMultipleInteractions = false;
-  IrritationBar irritationBar;
-  InteractableUI interactableUI;
+  [SerializeField] private bool allowMultipleInteractions = false;
+  [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
+  [SerializeField] private InteractableAudio audioClips;
+  [SerializeField] private InteractablePlayerAnimation playerAnimations;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -13,16 +15,44 @@ public class Interactable : MonoBehaviour
     public NonPlayerController nonPlayerController;
     public float irritationModifier;
   }
-  public List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
-  NonPlayerController reactingNPC;
 
-  [SerializeField] private PlayerAnimation mouthPlayerAnimation;
-  [SerializeField] private PlayerAnimation pawPlayerAnimation;
-  [SerializeField] private PlayerAnimation bodyPlayerAnimation;
+  private IrritationBar irritationBar;
+  private InteractableUI interactableUI;
+  private NonPlayerController reactingNPC;
+  private AudioSource audioSource;
 
-  void Start()
+  protected virtual void Start()
   {
     interactableUI = GetComponent<InteractableUI>();
+    audioSource = GetComponent<AudioSource>();
+  }
+
+  protected virtual void MouthInteraction()
+  {
+    Debug.Log("MouthInteraction");
+    SafePlayOneShot(audioClips.Mouth);
+  }
+
+  protected virtual void PawInteraction()
+  {
+    Debug.Log("PawInteraction");
+    SafePlayOneShot(audioClips.Paw);
+  }
+
+  protected virtual void BodyInteraction()
+  {
+    Debug.Log("BodyInteraction");
+    SafePlayOneShot(audioClips.Body);
+  }
+
+  public void ShowTooltip()
+  {
+    interactableUI.ShowInteractionTip(true);
+  }
+
+  public void HideTooltip()
+  {
+    interactableUI.ShowInteractionTip(false);
   }
 
   public PlayerAnimation HandleInteraction(InteractionType interactionType)
@@ -30,7 +60,7 @@ public class Interactable : MonoBehaviour
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
     {
-      setIrritationScore(irritation);
+      SetIrritationScore(irritation);
     }
     // Set the game object to inactive & destroy the interaction tool tip
     if (!allowMultipleInteractions)
@@ -44,18 +74,18 @@ public class Interactable : MonoBehaviour
     {
       case InteractionType.UseBody:
         BodyInteraction();
-        return bodyPlayerAnimation;
+        return playerAnimations.Body;
       case InteractionType.UsePaw:
         PawInteraction();
-        return pawPlayerAnimation;
+        return playerAnimations.Paw;
       default:
         MouthInteraction();
-        return mouthPlayerAnimation;
+        return playerAnimations.Mouth;
     }
   }
 
   // UpdateIrritation triggered by InteractableController
-  void setIrritationScore(IrritationReaction irritation)
+  private void SetIrritationScore(IrritationReaction irritation)
   {
     reactingNPC = irritation.nonPlayerController;
     irritationBar = reactingNPC.irritationBar;
@@ -81,28 +111,8 @@ public class Interactable : MonoBehaviour
     }
   }
 
-  protected virtual void MouthInteraction()
+  private void SafePlayOneShot(AudioClip clip)
   {
-    Debug.Log("MouthInteraction");
-  }
-
-  protected virtual void PawInteraction()
-  {
-    Debug.Log("PawInteraction");
-  }
-
-  protected virtual void BodyInteraction()
-  {
-    Debug.Log("BodyInteraction");
-  }
-
-  public void ShowTooltip()
-  {
-    interactableUI.ShowInteractionTip(true);
-  }
-
-  public void HideTooltip()
-  {
-    interactableUI.ShowInteractionTip(false);
+    if (clip != null) audioSource.PlayOneShot(clip);
   }
 }

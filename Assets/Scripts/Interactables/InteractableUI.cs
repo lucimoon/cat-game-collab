@@ -29,11 +29,19 @@ public class InteractableUI : MonoBehaviour
     if (interactionBindings == null)
     {
       interactionBindings = playerController.interactionBindings;
-      initInteractionTip();
+      InitInteractionTip();
     }
   }
 
-  void initInteractionTip()
+  public void ShowInteractionTip(bool isVisible)
+  {
+    if (interactionTipInstance != null)
+    {
+      interactionTipInstance.gameObject.SetActive(isVisible);
+    }
+  }
+
+  private void InitInteractionTip()
   {
     if (interactionBindings != null)
     {
@@ -58,7 +66,7 @@ public class InteractableUI : MonoBehaviour
   }
 
   // Set the instructional interaction tool tip text
-  void SetInteractionTipText(Transform tipParent, InteractionOption interactionOption, int index)
+  private void SetInteractionTipText(Transform tipParent, InteractionOption interactionOption, int index)
   {
     GameObject duplicateTipParent = Instantiate(tipParent.gameObject);
     duplicateTipParent.transform.SetParent(interactionTipInstance.transform, false);
@@ -70,22 +78,14 @@ public class InteractableUI : MonoBehaviour
 
     tipParentTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 50f * index, tipParentTransform.rect.height);
 
-    tipButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = keyBindingText(interactionOption.interactionType);
+    tipButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = KeyBindingText(interactionOption.interactionType);
     tipDisplayText.GetComponent<TMPro.TextMeshProUGUI>().text = interactionOption.interactionTipText;
   }
 
-  string keyBindingText(InteractionType interactionType)
+  private string KeyBindingText(InteractionType interactionType)
   {
     if (interactionType == InteractionType.UseMouth) return interactionBindings["UseMouth"];
     if (interactionType == InteractionType.UseBody) return interactionBindings["UseBody"];
     return interactionBindings["UsePaw"];
-  }
-
-  public void ShowInteractionTip(bool isVisible)
-  {
-    if (interactionTipInstance != null)
-    {
-      interactionTipInstance.gameObject.SetActive(isVisible);
-    }
   }
 }

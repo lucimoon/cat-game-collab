@@ -5,9 +5,10 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
   // Interface variables
-  [Header("Speed Multipliers")]
+  [Header("Movement Multipliers")]
   [SerializeField] private float walkMultiplier = 3.0f;
   [SerializeField] private float runMultiplier = 8.0f;
+  [SerializeField] private float rotationFactorPerFrame = 15.0f;
 
   [Header("Jump Parameters")]
   [SerializeField] private float maxJumpHeight = 6.0f;
@@ -16,40 +17,42 @@ public class PlayerController : MonoBehaviour
   [Tooltip("Distance before fall animation is triggered")]
   [SerializeField] private float fallHeight = 0.075f;
 
+
   // Declare reference variables
-  PlayerInput playerInput;
-  CharacterController characterController;
-  Animator animator;
-  Interactable interactable;
+  private PlayerInput playerInput;
+  private CharacterController characterController;
+  private Animator animator;
+  private Interactable interactable;
 
   // Variables to store optimized setter/getter parameter IDs
-  int isFallingHash;
-  int isJumpingHash;
-  int isMovingHash;
-  int isRunningHash;
+  private int isFallingHash;
+  private int isJumpingHash;
+  private int isMovingHash;
+  private int isRunningHash;
 
   // Variables to store player input values
-  Vector3 currentMovementInput;
-  Vector3 currentVerticalMovement = new Vector3();
-  Vector3 currentMovement;
-  bool isMovementPressed;
-  bool isRunPressed;
+  private Vector3 currentMovementInput;
+  private Vector3 currentVerticalMovement = new Vector3();
+  private Vector3 currentMovement;
+  private bool isMovementPressed;
+  private bool isRunPressed;
 
   // Constants
-  public float rotationFactorPerFrame = 15.0f;
-  int zero = 0;
-  float gravity;
-  float groundedGravity = -.05f;
+  private int zero = 0;
+  private float gravity;
+  private float groundedGravity = -.05f;
 
   // Jumping variables
-  bool isJumpPressed = false;
-  bool isJumping = false;
-  bool isJumpAnimating = false;
-  float previousHeight;
+  private bool isJumpPressed = false;
+  private bool isJumping = false;
+  private bool isJumpAnimating = false;
+  private float previousHeight;
 
   // Interact
   public bool isInteractPressed;
   InputAction interactAction;
+
+  private PlayerAudio playerAudio;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
@@ -113,6 +116,7 @@ public class PlayerController : MonoBehaviour
   {
     characterController = GetComponent<CharacterController>();
     animator = GetComponent<Animator>();
+    playerAudio = GetComponent<PlayerAudio>();
   }
 
   void initClassInstances()
@@ -219,6 +223,7 @@ public class PlayerController : MonoBehaviour
 
   private void jump()
   {
+    // TODO: Replace ground checks with a raycasting solution
     bool shouldJump = !isJumping && characterController.isGrounded && isJumpPressed;
     bool hasLanded = isJumping && characterController.isGrounded && !isJumpPressed;
 
@@ -316,7 +321,14 @@ public class PlayerController : MonoBehaviour
         break;
     }
 
-    interactable.HandleInteraction(interactionType);
+    /*
+    * This may be a weird pattern. We're
+    * sneakily returning a PlayerAnimation from
+    * a method that's called HandleInteraction.
+    * I can't think of a better approach at the moment.
+    */
+    PlayerAnimation animation = interactable.HandleInteraction(interactionType);
+    PlayAnimation(animation);
   }
 
   private void UseDefaultReaction(string interactionName)
@@ -341,10 +353,25 @@ public class PlayerController : MonoBehaviour
   {
     Debug.Log("Meow");
     // Default Animation and Audio lives here...
+    animator.Play("Meow", -1);
+    playerAudio.PlayMeow();
   }
 
   private void UsePaw() { Debug.Log("UsePaw"); }
   private void TakeRest() { Debug.Log("TakeRest"); }
 
   // End Default Behaviors
+
+  private void PlayAnimation(PlayerAnimation animation)
+  {
+    // This can be considered complete when all animations in PlayerAnimation are added.
+    switch (animation)
+    {
+      case PlayerAnimation.Nudge:
+        animator.Play("Nudge", -1);
+        break;
+      default:
+        break;
+    }
+  }
 }

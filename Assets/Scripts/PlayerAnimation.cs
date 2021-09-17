@@ -1,5 +1,6 @@
 public enum PlayerAnimation
 {
+  None,
   Eat,
   Jump,
   Loaf,

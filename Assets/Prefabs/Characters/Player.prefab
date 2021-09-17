@@ -927,7 +927,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4646099078173554995}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 3ee6e5ee2193243e29b05377bf376d17, type: 3}
+  m_Avatar: {fileID: 9000000, guid: ee30f37ade1dc412cb29074d70b1ebba, type: 3}
   m_Controller: {fileID: 9100000, guid: b419644e741a74b87bdc0099bc52eb65, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
@@ -972,6 +972,9 @@ MonoBehaviour:
   maxJumpHeight: 3.5
   jumpTimeToApex: 0.3
   jumpTimeToFall: 0.05
+  fallHeight: 0.075
+  rotationFactorPerFrame: 15
+  isInteractPressed: 0
 --- !u!1 &4646099078190135414
 GameObject:
   m_ObjectHideFlags: 0
