@@ -271,7 +271,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c664e9ce981754cd48a6a69d4f2d26c8, type: 2}
+  - {fileID: 2100000, guid: 3cbcf27e3d1a34260ac4990dc6ec058a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1064,6 +1064,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b0f631d926c2641fea6b814ca64d131f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a86d47e7ba1074fe9854c394b7bffc93, type: 2}
     - target: {fileID: 919132149155446097, guid: b0f631d926c2641fea6b814ca64d131f, type: 3}
       propertyPath: m_Name
       value: couch
@@ -1541,7 +1545,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 29f6129fb0976460f9b6be42f719e977, type: 2}
+  - {fileID: 2100000, guid: d81a51553acf7407285e9a2f9b0c28c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2580,7 +2584,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c664e9ce981754cd48a6a69d4f2d26c8, type: 2}
+  - {fileID: 2100000, guid: ddd9f0d5987894c93a802f55cf983b79, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2898,7 +2902,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 29f6129fb0976460f9b6be42f719e977, type: 2}
+  - {fileID: 2100000, guid: d81a51553acf7407285e9a2f9b0c28c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
