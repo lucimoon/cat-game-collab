@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028355, g: 0.22571374, b: 0.30692255, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571336, b: 0.3069219, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc8b1c4933e04487bc9078406f7632d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextScene: look-and-feel
+  nextScene: demo
 --- !u!4 &588271088
 Transform:
   m_ObjectHideFlags: 0
@@ -752,7 +752,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: be the jerk
+  m_text: 'be a jerk '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 89937547844f54c0cb80ea7a2efcf1ac, type: 2}
   m_sharedMaterial: {fileID: 2504035988532019930, guid: 89937547844f54c0cb80ea7a2efcf1ac, type: 2}
