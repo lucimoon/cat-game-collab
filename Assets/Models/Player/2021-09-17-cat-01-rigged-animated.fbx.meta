@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ee30f37ade1dc412cb29074d70b1ebba
+guid: 47b0733ba78f14dd68266d3d76f64009
 ModelImporter:
   serializedVersion: 21100
   internalIDToNameTable:
@@ -8,10 +8,10 @@ ModelImporter:
     second: Armature|_Still
   - first:
       74: 6665285691101239136
-    second: Armature|DefaultPaw
+    second: DefaultPaw
   - first:
       74: 5297050669623574059
-    second: Eat
+    second: Armature|Eat
   - first:
       74: -8945691123924629249
     second: Idle
@@ -23,13 +23,13 @@ ModelImporter:
     second: Armature|JumpDown
   - first:
       74: 5277777409621656941
-    second: JumpUp
+    second: Armature|JumpUp
   - first:
       74: -6313424733904766377
     second: Armature|Loaf
   - first:
       74: 90234628690566067
-    second: Armature|Meow
+    second: Meow
   - first:
       74: -2893444273542234913
     second: Armature|Nudge
@@ -58,8 +58,8 @@ ModelImporter:
       74: 7520920628847901212
     second: _Still
   - first:
-      74: -1975782567089187829
-    second: DefaultPaw
+      74: 2530875414512321751
+    second: Eat
   - first:
       74: 5539831331247536789
     second: Jump
@@ -67,11 +67,11 @@ ModelImporter:
       74: 2104999889037103153
     second: JumpDown
   - first:
+      74: 8521470458871766595
+    second: JumpUp
+  - first:
       74: -2531148129909604043
     second: Loaf
-  - first:
-      74: -6773254756635012442
-    second: Meow
   - first:
       74: -5628042592234844014
     second: Nudge
@@ -647,7 +647,7 @@ ModelImporter:
     tangentImportMode: 3
     normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
-    blendShapeNormalImportMode: 1
+    blendShapeNormalImportMode: 2
     normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 1
