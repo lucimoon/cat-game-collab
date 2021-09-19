@@ -357,7 +357,13 @@ public class PlayerController : MonoBehaviour
     playerAudio.PlayMeow();
   }
 
-  private void UsePaw() { Debug.Log("UsePaw"); }
+  private void UsePaw()
+  {
+    Debug.Log("UsePaw");
+    gameObject.transform.Translate(Vector3.forward * 2, Space.Self);
+    animator.SetTrigger("Pounce");
+  }
+
   private void TakeRest()
   {
     Debug.Log("TakeRest");
