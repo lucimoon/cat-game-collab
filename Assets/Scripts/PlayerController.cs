@@ -358,7 +358,11 @@ public class PlayerController : MonoBehaviour
   }
 
   private void UsePaw() { Debug.Log("UsePaw"); }
-  private void TakeRest() { Debug.Log("TakeRest"); }
+  private void TakeRest()
+  {
+    Debug.Log("TakeRest");
+    animator.SetTrigger("Rest");
+  }
 
   // End Default Behaviors
 
