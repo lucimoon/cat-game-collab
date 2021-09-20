@@ -1,6 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(ParticleSystem))]
+[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class FallsAndBreaks : Interactable
 {
   private Transform player;
@@ -35,7 +39,10 @@ public class FallsAndBreaks : Interactable
       // If we run out of interactions, make the object essentially static
       if (interactionCount == maxInteractionCount)
       {
-        Destroy(rigidbody);
+        rigidbody.useGravity = false;
+        rigidbody.isKinematic = true;
+        boxCollider.isTrigger = false;
+        rigidbody.gameObject.isStatic = true;
       }
       else
       {
@@ -81,10 +88,11 @@ public class FallsAndBreaks : Interactable
       // Start particle effect
       particleSystem.Play();
 
-      // Remove the mesh & collider of original interactable
-      Destroy(meshRenderer);
-      Destroy(boxCollider);
-      Destroy(rigidbody);
+      // Disable the mesh & collider of original interactable
+      boxCollider.enabled = false;
+      meshRenderer.enabled = false;
+      rigidbody.gameObject.isStatic = true;
+
 
       // Persist effect after pause
       StartCoroutine(coroutine = ParticlePlayback());

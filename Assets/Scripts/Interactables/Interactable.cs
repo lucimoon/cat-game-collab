@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(InteractableUI))]
 public class Interactable : MonoBehaviour
 {
   public int maxInteractionCount = 1000;
