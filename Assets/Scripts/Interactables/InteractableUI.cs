@@ -41,6 +41,11 @@ public class InteractableUI : MonoBehaviour
     }
   }
 
+  public void DestroyInteractionTip()
+  {
+    if (interactionTipInstance != null) Destroy(interactionTipInstance.gameObject);
+  }
+
   private void InitInteractionTip()
   {
     if (interactionBindings != null)

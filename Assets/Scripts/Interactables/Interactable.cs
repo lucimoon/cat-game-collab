@@ -4,7 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class Interactable : MonoBehaviour
 {
-  [SerializeField] private bool allowMultipleInteractions = false;
+  public int maxInteractionCount = 1000;
+  public int interactionCount = 0;
   public bool allowInteractions = true;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
@@ -26,6 +27,14 @@ public class Interactable : MonoBehaviour
   {
     interactableUI = GetComponent<InteractableUI>();
     audioSource = GetComponent<AudioSource>();
+  }
+
+  protected virtual void LateUpdate()
+  {
+    if (interactionCount == maxInteractionCount)
+    {
+      interactableUI.DestroyInteractionTip();
+    }
   }
 
   protected virtual void MouthInteraction()
@@ -62,12 +71,6 @@ public class Interactable : MonoBehaviour
     foreach (IrritationReaction irritation in irritationReactionList)
     {
       SetIrritationScore(irritation);
-    }
-    // Set the game object to inactive & destroy the interaction tool tip
-    if (!allowMultipleInteractions)
-    {
-      // Todo: Make sure that interaction tip is also destroyed/set inactive
-      // gameObject.SetActive(false);
     }
 
     // Todo: Setup max interactions

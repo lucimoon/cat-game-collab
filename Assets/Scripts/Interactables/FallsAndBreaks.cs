@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FallsAndBreaks : Interactable
@@ -10,10 +9,7 @@ public class FallsAndBreaks : Interactable
   private new ParticleSystem particleSystem;
   private MeshRenderer meshRenderer;
   private IEnumerator coroutine;
-  public bool isDestroyed = false;
-  public bool isMoving = false;
   public float nudgeForce = 400f;
-
 
   protected override void Start()
   {
@@ -25,16 +21,38 @@ public class FallsAndBreaks : Interactable
     meshRenderer = GetComponent<MeshRenderer>();
   }
 
-  void LateUpdate()
+  // These three might be useful in other scripts for other interactables
+  void FixedUpdate()
   {
-    if (rigidbody != null && rigidbody.velocity.magnitude > 0.01f)
+    isObjectMoving();
+  }
+
+  private void isObjectMoving()
+  {
+    // Use IsSleeping() to test if the object is moving
+    if (rigidbody != null && rigidbody.IsSleeping())
     {
-      isMoving = true;
+      // If we run out of interactions, make the object essentially static
+      if (interactionCount == maxInteractionCount)
+      {
+        Destroy(rigidbody);
+      }
+      else
+      {
+        // If the object is finished moving and we have more interactions left, allow more interactions
+        handleInteractablity(true);
+      }
     }
-    else
-    {
-      isMoving = false;
-    }
+  }
+
+  private void handleInteractablity(bool enable)
+  {
+    allowInteractions = enable && interactionCount < maxInteractionCount; // This should definitely be accessible to interaction tip so we can hide it
+
+    // Toggle these settings to handle the physical presence and interactivity of the object
+    rigidbody.useGravity = !allowInteractions;
+    rigidbody.isKinematic = allowInteractions;
+    boxCollider.isTrigger = allowInteractions;
   }
 
   protected override void PawInteraction()
@@ -43,11 +61,10 @@ public class FallsAndBreaks : Interactable
 
     if (allowInteractions)
     {
-      Debug.Log("Starting object transform, turning off interactions");
-      allowInteractions = false;
-      rigidbody.useGravity = true;
-      rigidbody.isKinematic = false;
-      boxCollider.isTrigger = false;
+      interactionCount += 1;
+
+      // Turn off interactivity, and let the object get nudged
+      handleInteractablity(false);
 
       Vector3 direction = transform.position - player.position;
       direction.y = 0;
@@ -55,7 +72,6 @@ public class FallsAndBreaks : Interactable
       rigidbody.AddForce(direction * nudgeForce, ForceMode.Force);
     }
   }
-
 
   void OnCollisionEnter(Collision other)
   {
@@ -70,17 +86,8 @@ public class FallsAndBreaks : Interactable
       Destroy(boxCollider);
       Destroy(rigidbody);
 
-      isDestroyed = true;
-
       // Persist effect after pause
       StartCoroutine(coroutine = ParticlePlayback());
-    }
-    else
-    {
-      if (!isDestroyed && !isMoving)
-      {
-        StartCoroutine(coroutine = DelayInteraction());
-      }
     }
   }
 
@@ -88,17 +95,5 @@ public class FallsAndBreaks : Interactable
   {
     yield return new WaitForSeconds(2.0f);
     particleSystem.Pause();
-  }
-
-  private IEnumerator DelayInteraction()
-  {
-    yield return new WaitForSeconds(2.0f);
-    if (rigidbody != null)
-    {
-      rigidbody.useGravity = false;
-      rigidbody.isKinematic = true;
-      boxCollider.isTrigger = true;
-      allowInteractions = true;
-    }
   }
 }
