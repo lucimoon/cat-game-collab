@@ -5,6 +5,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
   [SerializeField] private bool allowMultipleInteractions = false;
+  public bool allowInteractions = true;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
   [SerializeField] private InteractablePlayerAnimation playerAnimations;
@@ -66,7 +67,7 @@ public class Interactable : MonoBehaviour
     if (!allowMultipleInteractions)
     {
       // Todo: Make sure that interaction tip is also destroyed/set inactive
-      gameObject.SetActive(false);
+      // gameObject.SetActive(false);
     }
 
     // Todo: Setup max interactions
