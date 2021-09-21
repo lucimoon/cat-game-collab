@@ -36,25 +36,14 @@ public class FallsAndBreaks : Interactable
     // Use IsSleeping() to test if the object is moving
     if (rigidbody != null && rigidbody.IsSleeping())
     {
-      // If we run out of interactions, make the object essentially static
-      if (interactionCount == maxInteractionCount)
-      {
-        rigidbody.useGravity = false;
-        rigidbody.isKinematic = true;
-        boxCollider.isTrigger = false;
-        rigidbody.gameObject.isStatic = true;
-      }
-      else
-      {
-        // If the object is finished moving and we have more interactions left, allow more interactions
-        handleInteractablity(true);
-      }
+      // If the object is finished moving and we have more interactions left, allow more interactions
+      handleInteractablity(true);
     }
   }
 
   private void handleInteractablity(bool enable)
   {
-    allowInteractions = enable && interactionCount < maxInteractionCount; // This should definitely be accessible to interaction tip so we can hide it
+    allowInteractions = enable;
 
     // Toggle these settings to handle the physical presence and interactivity of the object
     rigidbody.useGravity = !allowInteractions;
@@ -68,8 +57,6 @@ public class FallsAndBreaks : Interactable
 
     if (allowInteractions)
     {
-      interactionCount += 1;
-
       // Turn off interactivity, and let the object get nudged
       handleInteractablity(false);
 
@@ -103,5 +90,6 @@ public class FallsAndBreaks : Interactable
   {
     yield return new WaitForSeconds(2.0f);
     particleSystem.Pause();
+    isDestroyed = true;
   }
 }

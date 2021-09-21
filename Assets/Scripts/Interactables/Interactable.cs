@@ -5,9 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(InteractableUI))]
 public class Interactable : MonoBehaviour
 {
-  public int maxInteractionCount = 1000;
-  public int interactionCount = 0;
   public bool allowInteractions = true;
+  public bool isDestroyed = false;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
   [SerializeField] private InteractablePlayerAnimation playerAnimations;
@@ -32,7 +31,7 @@ public class Interactable : MonoBehaviour
 
   protected virtual void LateUpdate()
   {
-    if (interactionCount == maxInteractionCount)
+    if (isDestroyed)
     {
       interactableUI.DestroyInteractionTip();
     }

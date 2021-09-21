@@ -53,12 +53,13 @@ public class InteractableUI : MonoBehaviour
       // Set position of interaction tool tip (attempt here to take into account size of object + camera position)
       Quaternion rotation = Camera.main.transform.rotation;
       Vector3 position = gameObject.transform.position;
-      position.y = gameObject.transform.localScale.y + position.y;
-      position.x = gameObject.transform.localScale.x + position.x;
-      position.z = gameObject.transform.localScale.z + position.z;
+      // position.y = gameObject.transform.localScale.y + position.y;
+      // position.x = gameObject.transform.localScale.x + position.x;
+      // position.z = gameObject.transform.localScale.z + position.z;
 
       // Create new instance of tool tip based on prefab
       interactionTipInstance = Instantiate(Resources.Load("GenericInteractionTip", typeof(Canvas)), position, rotation) as Canvas;
+      interactionTipInstance.gameObject.transform.SetParent(gameObject.transform);
       interactionTipInstance.gameObject.SetActive(false);
 
       Transform tipParent = interactionTipInstance.transform.Find("TipParent");
