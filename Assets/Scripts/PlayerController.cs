@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
   [SerializeField] private float walkMultiplier = 3.0f;
   [SerializeField] private float runMultiplier = 8.0f;
   [SerializeField] private float rotationFactorPerFrame = 15.0f;
+  [SerializeField] private float pounceDistance = 1.2f;
 
   [Header("Jump Parameters")]
   [SerializeField] private float maxJumpHeight = 6.0f;
@@ -357,7 +358,13 @@ public class PlayerController : MonoBehaviour
     playerAudio.PlayMeow();
   }
 
-  private void UsePaw() { Debug.Log("UsePaw"); }
+  private void UsePaw()
+  {
+    Debug.Log("UsePaw");
+    gameObject.transform.Translate(Vector3.forward * pounceDistance, Space.Self);
+    animator.SetTrigger("Pounce");
+  }
+
   private void TakeRest()
   {
     Debug.Log("TakeRest");
