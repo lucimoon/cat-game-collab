@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(InteractableUI))]
 public class Interactable : MonoBehaviour
 {
-  [SerializeField] private bool allowMultipleInteractions = false;
+  public bool allowInteractions = true;
+  public bool isDestroyed = false;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
   [SerializeField] private InteractablePlayerAnimation playerAnimations;
@@ -25,6 +27,14 @@ public class Interactable : MonoBehaviour
   {
     interactableUI = GetComponent<InteractableUI>();
     audioSource = GetComponent<AudioSource>();
+  }
+
+  protected virtual void LateUpdate()
+  {
+    if (isDestroyed)
+    {
+      interactableUI.DestroyInteractionTip();
+    }
   }
 
   protected virtual void MouthInteraction()
@@ -61,12 +71,6 @@ public class Interactable : MonoBehaviour
     foreach (IrritationReaction irritation in irritationReactionList)
     {
       SetIrritationScore(irritation);
-    }
-    // Set the game object to inactive & destroy the interaction tool tip
-    if (!allowMultipleInteractions)
-    {
-      // Todo: Make sure that interaction tip is also destroyed/set inactive
-      gameObject.SetActive(false);
     }
 
     // Todo: Setup max interactions
