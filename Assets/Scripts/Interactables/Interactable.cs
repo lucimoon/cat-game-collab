@@ -9,7 +9,7 @@ public class Interactable : MonoBehaviour
   public bool isDestroyed = false;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
-  [SerializeField] private InteractablePlayerAnimation playerAnimations;
+  [SerializeField] protected InteractablePlayerAnimation playerAnimations;
 
   [System.Serializable]
   public struct IrritationReaction

@@ -381,6 +381,9 @@ public class PlayerController : MonoBehaviour
       case PlayerAnimation.Nudge:
         animator.Play("Nudge", -1);
         break;
+      case PlayerAnimation.Eat:
+        animator.Play("Eat", -1);
+        break;
       default:
         break;
     }
