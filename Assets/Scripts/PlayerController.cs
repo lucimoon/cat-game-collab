@@ -18,8 +18,9 @@ public class PlayerController : MonoBehaviour
   [Tooltip("Distance before fall animation is triggered")]
   [SerializeField] private float fallHeight = 0.075f;
 
-
+  [Header("Miscellaneous")]
   // Declare reference variables
+  [SerializeField] private Transform mouthAttachmentPoint;
   private PlayerInput playerInput;
   private CharacterController characterController;
   private Animator animator;
@@ -328,7 +329,7 @@ public class PlayerController : MonoBehaviour
     * a method that's called HandleInteraction.
     * I can't think of a better approach at the moment.
     */
-    PlayerAnimation animation = interactable.HandleInteraction(interactionType);
+    PlayerAnimation animation = interactable.HandleInteraction(interactionType, mouthAttachmentPoint);
     PlayAnimation(animation);
   }
 

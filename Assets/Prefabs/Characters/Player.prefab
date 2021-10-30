@@ -93,6 +93,7 @@ MonoBehaviour:
   jumpTimeToApex: 0.3
   jumpTimeToFall: 0.15
   fallHeight: 0.075
+  mouthAttachmentPoint: {fileID: 2753748097088070239}
   isInteractPressed: 0
 --- !u!114 &1229453049078770093
 MonoBehaviour:
@@ -225,7 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2753748097088070239}
   m_Layer: 0
-  m_Name: Mouth Hold
+  m_Name: Mouth Attachment Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

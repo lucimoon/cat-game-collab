@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#nullable enable
 public class Pickup : Interactable
 {
-  [SerializeField] private Transform mouthAttachmentPoint;
   private bool isHeld = false;
 
-  protected override void MouthInteraction()
+  protected override void MouthInteraction(Transform? attachmentPoint)
   {
-
     if (isHeld)
     {
       // Enable Gravity
@@ -25,7 +24,7 @@ public class Pickup : Interactable
     }
     else
     {
-      if (mouthAttachmentPoint != null)
+      if (attachmentPoint != null)
       {
         this.playerAnimations.Mouth = PlayerAnimation.Eat;
         //Disable Gravity
@@ -34,9 +33,9 @@ public class Pickup : Interactable
         rigidbody.isKinematic = true;
 
         // Parent to player
-        transform.SetParent(mouthAttachmentPoint);
+        transform.SetParent(attachmentPoint);
         //Attach to mouth
-        transform.position = mouthAttachmentPoint.position;
+        transform.position = attachmentPoint.position;
 
         isHeld = true;
       }
