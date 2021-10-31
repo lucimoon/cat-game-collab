@@ -9,7 +9,7 @@ public class Interactable : MonoBehaviour
   public bool isDestroyed = false;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
-  [SerializeField] private InteractablePlayerAnimation playerAnimations;
+  [SerializeField] protected InteractablePlayerAnimation playerAnimations;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -43,6 +43,13 @@ public class Interactable : MonoBehaviour
     SafePlayOneShot(audioClips.Mouth);
   }
 
+#nullable enable
+  protected virtual void MouthInteraction(Transform? attachmentPoint)
+  {
+    SafePlayOneShot(audioClips.Mouth);
+  }
+#nullable disable
+
   protected virtual void PawInteraction()
   {
     Debug.Log("PawInteraction");
@@ -67,6 +74,12 @@ public class Interactable : MonoBehaviour
 
   public PlayerAnimation HandleInteraction(InteractionType interactionType)
   {
+    return HandleInteraction(interactionType, null);
+  }
+
+#nullable enable
+  public PlayerAnimation HandleInteraction(InteractionType interactionType, Transform? attachmentPoint)
+  {
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
     {
@@ -83,10 +96,11 @@ public class Interactable : MonoBehaviour
         PawInteraction();
         return playerAnimations.Paw;
       default:
-        MouthInteraction();
+        MouthInteraction(attachmentPoint);
         return playerAnimations.Mouth;
     }
   }
+#nullable disable
 
   // UpdateIrritation triggered by InteractableController
   private void SetIrritationScore(IrritationReaction irritation)
