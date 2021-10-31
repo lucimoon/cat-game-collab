@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
 public class PlayerAudio : MonoBehaviour
 {
-  [SerializeField] private List<AudioClip> footsteps = new List<AudioClip>();
-  [SerializeField] private List<AudioClip> meows = new List<AudioClip>();
+  [SerializeField] private List<AudioClip> footsteps;
+  [SerializeField] private List<AudioClip> meows;
+  [SerializeField] private string footstepDirectory = "Audio/cat-footsteps";
+  [SerializeField] private string meowDirectory = "Audio/meows";
   private AudioSource audioSource;
   private System.Random random = new System.Random();
 
   void Start()
   {
+    LoadAudioClips();
     audioSource = GetComponent<AudioSource>();
   }
 
@@ -36,5 +40,11 @@ public class PlayerAudio : MonoBehaviour
     AudioClip clip = clips[randomIndex];
 
     SafePlayOneShot(clip);
+  }
+
+  private void LoadAudioClips()
+  {
+    footsteps = Resources.LoadAll<AudioClip>(footstepDirectory).ToList<AudioClip>();
+    meows = Resources.LoadAll<AudioClip>(meowDirectory).ToList<AudioClip>();
   }
 }
