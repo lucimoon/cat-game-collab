@@ -284,6 +284,7 @@ public class PlayerController : MonoBehaviour
     if (overrideDestination != null)
     {
       motionVector = CalculateOverrideMotion();
+      transform.LookAt((Vector3)overrideDestination);
     }
     else
     {

@@ -264,7 +264,7 @@ MonoBehaviour:
     Paw: 0
     Body: 7
   speed: 0.1
-  rotationSpeed: 1
+  rotationSpeed: 6.5
   timeElapsed: 0
   playerTarget: {fileID: 645380932}
 --- !u!114 &2346902343669701121
