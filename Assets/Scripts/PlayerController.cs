@@ -55,6 +55,11 @@ public class PlayerController : MonoBehaviour
   InputAction interactAction;
 
   private PlayerAudio playerAudio;
+  private bool shouldOverrideInput = false;
+  private float overrideSpeed;
+  private Vector3? overrideDestination;
+  private Vector3? overrideRotation;
+  private PlayerAnimation interactionAnimation;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
@@ -170,7 +175,7 @@ public class PlayerController : MonoBehaviour
 
   private void animateMove()
   {
-    animator.SetBool("isMoving", isMovementPressed);
+    animator.SetBool("isMoving", isMovementPressed || shouldOverrideInput);
     animator.SetBool("isRunning", isRunPressed);
   }
 
@@ -179,6 +184,8 @@ public class PlayerController : MonoBehaviour
     if (!isMovementPressed) return;
 
     Quaternion currentRotation = transform.rotation;
+
+    // Translate player analog input to a point in space to look at
     Vector3 positionToLookAt = Camera.main.transform.TransformVector(currentMovement);
     positionToLookAt.y = zero;
 
@@ -286,30 +293,72 @@ public class PlayerController : MonoBehaviour
 
   private void move()
   {
+    Vector3? motionVector;
     float speedMultiplier = getSpeedMultiplier();
 
-    // Convert horizontal input to worldspace
-    Vector3 cameraRelativeMotion = currentMovement;
+    if (shouldOverrideInput)
+    {
+      motionVector = CalculateOverrideMotion();
+      TurnAround();
+    }
+    else
+    {
+      // Convert horizontal input to worldspace
+      Vector3 cameraRelativeMotion = currentMovement;
 
-    // apply horizontal speed multiplers
-    cameraRelativeMotion.x *= speedMultiplier;
-    cameraRelativeMotion.z *= speedMultiplier;
+      // apply horizontal speed multiplers
+      cameraRelativeMotion.x *= speedMultiplier;
+      cameraRelativeMotion.z *= speedMultiplier;
 
-    // translate to camera relative direction
-    cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+      // translate to camera relative direction
+      cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+      // apply jump/gravity
+      cameraRelativeMotion += currentVerticalMovement;
+      motionVector = cameraRelativeMotion * Time.deltaTime;
+    }
 
-    // apply jump/gravity
-    cameraRelativeMotion += currentVerticalMovement;
-
-    characterController.Move(cameraRelativeMotion * Time.deltaTime);
+    if (motionVector != null)
+    {
+      characterController.Move((Vector3)motionVector);
+    }
 
     rotate();
     animateMove();
   }
 
+  private Vector3? CalculateOverrideMotion()
+  {
+    if (overrideDestination == null) return null;
+
+    bool isAtDestination = Vector3.Distance(transform.position, (Vector3)overrideDestination) < 0.1f;
+    if (isAtDestination)
+    {
+      shouldOverrideInput = false;
+      overrideDestination = null;
+      PlayAnimation(interactionAnimation);
+      return null;
+    }
+
+    Vector3 targetPosition = Vector3.MoveTowards(transform.position, (Vector3)overrideDestination, .3f);
+    return targetPosition - transform.position;
+  }
+
+  public void OverrideMovement(Vector3 targetPosition)
+  {
+    shouldOverrideInput = true;
+    overrideDestination = targetPosition;
+  }
+
+  public void OverrideRotation(Vector3 targetDirection, float overrideSpeed)
+  {
+    shouldOverrideInput = true;
+    overrideRotation = targetDirection;
+  }
+
   private void UseObjectInteraction(string interactionName)
   {
     InteractionType interactionType = InteractionType.UseMouth;
+    Transform interactionTransform = mouthAttachmentPoint;
 
     switch (interactionName)
     {
@@ -318,6 +367,7 @@ public class PlayerController : MonoBehaviour
         break;
       case "UseBody":
         interactionType = InteractionType.UseBody;
+        interactionTransform = transform;
         break;
       default:
         break;
@@ -327,10 +377,13 @@ public class PlayerController : MonoBehaviour
     * This may be a weird pattern. We're
     * sneakily returning a PlayerAnimation from
     * a method that's called HandleInteraction.
-    * I can't think of a better approach at the moment.
+    * Additionally it's being stored for later use when we
+    * override the players movement. The walk animation
+    * cancels this playback, then we attempt to play it
+    * again when they arrive at the destination.
     */
-    PlayerAnimation animation = interactable.HandleInteraction(interactionType, mouthAttachmentPoint);
-    PlayAnimation(animation);
+    interactionAnimation = interactable.HandleInteraction(interactionType, interactionTransform);
+    PlayAnimation(interactionAnimation);
   }
 
   private void UseDefaultReaction(string interactionName)
@@ -385,8 +438,23 @@ public class PlayerController : MonoBehaviour
       case PlayerAnimation.Eat:
         animator.Play("Eat", -1);
         break;
+      case PlayerAnimation.Pee:
+        animator.Play("Pee", -1);
+        break;
       default:
         break;
     }
+  }
+
+  public void TurnAround()
+  {
+    if (overrideRotation == null) return;
+
+    Quaternion currentRotation = transform.rotation;
+    Vector3 positionToLookAt = (Vector3)overrideRotation;
+
+    // Creates new rotation based on where the player is currently pressing
+    Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
+    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * overrideSpeed * Time.deltaTime);
   }
 }

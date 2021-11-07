@@ -62,6 +62,13 @@ public class Interactable : MonoBehaviour
     SafePlayOneShot(audioClips.Body);
   }
 
+#nullable enable
+  protected virtual void BodyInteraction(Transform? playerTransform)
+  {
+    SafePlayOneShot(audioClips.Body);
+  }
+#nullable disable
+
   public void ShowTooltip()
   {
     interactableUI.ShowInteractionTip(true);
@@ -90,7 +97,7 @@ public class Interactable : MonoBehaviour
     switch (interactionType)
     {
       case InteractionType.UseBody:
-        BodyInteraction();
+        BodyInteraction(attachmentPoint);
         return playerAnimations.Body;
       case InteractionType.UsePaw:
         PawInteraction();
