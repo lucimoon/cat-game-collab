@@ -42,8 +42,10 @@ GameObject:
   - component: {fileID: 8804440105574471602}
   - component: {fileID: 6758584628009296760}
   - component: {fileID: 1611194050060654852}
-  - component: {fileID: 9028790398123873371}
   - component: {fileID: 2346902343669701118}
+  - component: {fileID: 2346902343669701122}
+  - component: {fileID: 2346902343669701119}
+  - component: {fileID: 2346902343669701121}
   m_Layer: 0
   m_Name: Litter Box
   m_TagString: Interactable
@@ -129,33 +131,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.391345, y: 0.35092962, z: 2.0870175}
   m_Center: {x: -4.038968e-28, y: 0.17969066, z: -0.00000011920929}
---- !u!114 &9028790398123873371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5101360776430961325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4ede753986374bfa8c884c86f6347ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allowInteractions: 1
-  isDestroyed: 0
-  irritationReactionList: []
-  audioClips:
-    Mouth: {fileID: 0}
-    Paw: {fileID: 0}
-    Body: {fileID: 0}
-  playerAnimations:
-    Mouth: 0
-    Paw: 0
-    Body: 7
-  speed: 0.5
-  rotationSpeed: 1
-  timeElapsed: 0
-  playerTarget: {fileID: 645380932}
 --- !u!135 &2346902343669701118
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -169,3 +144,139 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2.8545003
   m_Center: {x: 1.1044109, y: 0.29107857, z: -1.4837713e-15}
+--- !u!82 &2346902343669701122
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101360776430961325}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &2346902343669701119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101360776430961325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eabde3af159ca49bda770ff77df0dfbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowInteractions: 1
+  isDestroyed: 0
+  irritationReactionList: []
+  audioClips:
+    Mouth: {fileID: 0}
+    Paw: {fileID: 0}
+    Body: {fileID: 0}
+  playerAnimations:
+    Mouth: 0
+    Paw: 0
+    Body: 7
+  speed: 0.1
+  rotationSpeed: 1
+  timeElapsed: 0
+  playerTarget: {fileID: 645380932}
+--- !u!114 &2346902343669701121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101360776430961325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c18f1520bf734a449d85209139ce51b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionOptionList: []

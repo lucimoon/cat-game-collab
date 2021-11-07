@@ -1,7 +1,7 @@
 using UnityEngine;
 
 #nullable enable
-public class Poopable : Interactable
+public class Peeable : Interactable
 {
   public float speed = 1f;
   public float rotationSpeed = 1f;
@@ -19,8 +19,8 @@ public class Poopable : Interactable
 
     if (controller != null)
     {
-      controller.OverrideMovement(playerTarget.position);
-      // controller.OverrideRotation(-transform.forward, rotationSpeed);
+      controller.OverrideMovement(playerTarget.position, speed);
+      controller.OverrideRotation(rotationSpeed);
     }
   }
 }

@@ -55,8 +55,8 @@ public class PlayerController : MonoBehaviour
   InputAction interactAction;
 
   private PlayerAudio playerAudio;
-  private bool shouldOverrideInput = false;
   private float overrideSpeed;
+  private float overrideRotationSpeed;
   private Vector3? overrideDestination;
   private Vector3? overrideRotation;
   private PlayerAnimation interactionAnimation;
@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
   {
     applyGravity();
     jump();
-    move();
+    Move();
     interact();
   }
 
@@ -175,23 +175,8 @@ public class PlayerController : MonoBehaviour
 
   private void animateMove()
   {
-    animator.SetBool("isMoving", isMovementPressed || shouldOverrideInput);
+    animator.SetBool("isMoving", isMovementPressed || overrideDestination != null);
     animator.SetBool("isRunning", isRunPressed);
-  }
-
-  private void rotate()
-  {
-    if (!isMovementPressed) return;
-
-    Quaternion currentRotation = transform.rotation;
-
-    // Translate player analog input to a point in space to look at
-    Vector3 positionToLookAt = Camera.main.transform.TransformVector(currentMovement);
-    positionToLookAt.y = zero;
-
-    // Creates new rotation based on where the player is currently pressing
-    Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
-    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
   }
 
   private void applyGravity()
@@ -291,15 +276,14 @@ public class PlayerController : MonoBehaviour
     interactable = null;
   }
 
-  private void move()
+  private void Move()
   {
     Vector3? motionVector;
     float speedMultiplier = getSpeedMultiplier();
 
-    if (shouldOverrideInput)
+    if (overrideDestination != null)
     {
       motionVector = CalculateOverrideMotion();
-      TurnAround();
     }
     else
     {
@@ -322,8 +306,53 @@ public class PlayerController : MonoBehaviour
       characterController.Move((Vector3)motionVector);
     }
 
-    rotate();
+    Rotate();
     animateMove();
+  }
+
+  private void Rotate()
+  {
+    Quaternion targetRotation;
+    Quaternion currentRotation = transform.rotation;
+    Vector3 lookTarget;
+    float rotationSpeed = rotationFactorPerFrame;
+
+    if (!isMovementPressed && overrideRotation == null) return;
+
+    if (overrideRotation != null)
+    {
+      lookTarget = (Vector3)overrideRotation;
+      rotationSpeed = overrideRotationSpeed;
+
+      // translate target to rotation
+      targetRotation = Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
+
+
+      float distance = Quaternion.Angle(transform.rotation, targetRotation);
+      bool isAtDestination = distance < 1;
+      Debug.Log(distance);
+      Debug.Log(isAtDestination);
+
+      if (isAtDestination)
+      {
+        overrideRotation = null;
+        overrideRotationSpeed = default;
+        return;
+      }
+      // set overrideRotation as target
+    }
+    else
+    {
+      // translate input to target
+      lookTarget = Camera.main.transform.TransformVector(currentMovement);
+      lookTarget.y = zero; // So we don't look up or down
+      // translate target to rotation
+      targetRotation = Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
+    }
+
+
+    // rotate transform
+    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
   }
 
   private Vector3? CalculateOverrideMotion()
@@ -333,26 +362,35 @@ public class PlayerController : MonoBehaviour
     bool isAtDestination = Vector3.Distance(transform.position, (Vector3)overrideDestination) < 0.1f;
     if (isAtDestination)
     {
-      shouldOverrideInput = false;
       overrideDestination = null;
       PlayAnimation(interactionAnimation);
       return null;
     }
 
-    Vector3 targetPosition = Vector3.MoveTowards(transform.position, (Vector3)overrideDestination, .3f);
+    Vector3 targetPosition = Vector3.MoveTowards(transform.position, (Vector3)overrideDestination, overrideSpeed);
     return targetPosition - transform.position;
   }
 
-  public void OverrideMovement(Vector3 targetPosition)
+  public void OverrideMovement(Vector3 targetPosition, float targetSpeed)
   {
-    shouldOverrideInput = true;
     overrideDestination = targetPosition;
+    this.overrideSpeed = targetSpeed;
   }
 
-  public void OverrideRotation(Vector3 targetDirection, float overrideSpeed)
+  public void OverrideRotation(Vector3 lookTarget, float rotationSpeed)
   {
-    shouldOverrideInput = true;
-    overrideRotation = targetDirection;
+    overrideRotation = lookTarget;
+    overrideRotationSpeed = rotationSpeed;
+  }
+
+  public void OverrideRotation(float rotationSpeed)
+  {
+    overrideRotationSpeed = rotationSpeed;
+  }
+
+  public void OverrideRotation(Vector3 lookTarget)
+  {
+    overrideRotation = lookTarget;
   }
 
   private void UseObjectInteraction(string interactionName)
@@ -446,15 +484,12 @@ public class PlayerController : MonoBehaviour
     }
   }
 
+  // Animation helper
   public void TurnAround()
   {
-    if (overrideRotation == null) return;
+    Vector3 lookTarget = -transform.forward;
 
-    Quaternion currentRotation = transform.rotation;
-    Vector3 positionToLookAt = (Vector3)overrideRotation;
 
-    // Creates new rotation based on where the player is currently pressing
-    Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt.normalized, Vector3.up);
-    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationFactorPerFrame * overrideSpeed * Time.deltaTime);
+    overrideRotation = lookTarget;
   }
 }
