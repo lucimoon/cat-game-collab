@@ -10,10 +10,16 @@ public class Peeable : Interactable
   [Header("Input Override Speeds")]
   [Tooltip("How fast player moves to interactionTarget")]
   [Range(0f, 1f)]
-  [SerializeField] private float speed = 1f;
+  [SerializeField] private float speed = 0.1f;
   [Tooltip("How fast player turns around mid-animation")]
   [Range(1f, 10f)]
-  [SerializeField] private float rotationSpeed = 1f;
+  [SerializeField] private float rotationSpeed = 6.5f;
+
+  protected override void Start()
+  {
+    base.Start();
+    playerAnimations.Body = PlayerAnimation.Pee;
+  }
 
   protected override void BodyInteraction(Transform? playerTransform)
   {
