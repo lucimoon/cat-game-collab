@@ -143,7 +143,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 2.8545003
-  m_Center: {x: 1.1044109, y: 0.29107857, z: -1.4837713e-15}
+  m_Center: {x: 0, y: 0.29107857, z: -1.4837713e-15}
 --- !u!82 &2346902343669701122
 AudioSource:
   m_ObjectHideFlags: 0
@@ -263,10 +263,9 @@ MonoBehaviour:
     Mouth: 0
     Paw: 0
     Body: 7
+  interactionTarget: {fileID: 645380932}
   speed: 0.1
   rotationSpeed: 6.5
-  timeElapsed: 0
-  playerTarget: {fileID: 645380932}
 --- !u!114 &2346902343669701121
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -44,7 +44,7 @@ public class Interactable : MonoBehaviour
   }
 
 #nullable enable
-  protected virtual void MouthInteraction(Transform? attachmentPoint)
+  protected virtual void MouthInteraction(Transform? mouthTransform)
   {
     SafePlayOneShot(audioClips.Mouth);
   }
@@ -85,7 +85,7 @@ public class Interactable : MonoBehaviour
   }
 
 #nullable enable
-  public PlayerAnimation HandleInteraction(InteractionType interactionType, Transform? attachmentPoint)
+  public PlayerAnimation HandleInteraction(InteractionType interactionType, Transform? playerTransform)
   {
     // Loop through each attached NPC irritation reaction
     foreach (IrritationReaction irritation in irritationReactionList)
@@ -97,13 +97,13 @@ public class Interactable : MonoBehaviour
     switch (interactionType)
     {
       case InteractionType.UseBody:
-        BodyInteraction(attachmentPoint);
+        BodyInteraction(playerTransform);
         return playerAnimations.Body;
       case InteractionType.UsePaw:
         PawInteraction();
         return playerAnimations.Paw;
       default:
-        MouthInteraction(attachmentPoint);
+        MouthInteraction(playerTransform);
         return playerAnimations.Mouth;
     }
   }

@@ -5,21 +5,29 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
   // Interface variables
-  [Header("Movement Multipliers")]
+  [Header("Player Input Multipliers")]
+  [Tooltip("Walk speed for player input")]
   [SerializeField] private float walkMultiplier = 3.0f;
+  [Tooltip("Run speed for player input")]
   [SerializeField] private float runMultiplier = 8.0f;
+  [Tooltip("Turn speed for player input")]
   [SerializeField] private float rotationFactorPerFrame = 15.0f;
+  [Tooltip("Distance player pounces")]
   [SerializeField] private float pounceDistance = 1.2f;
 
   [Header("Jump Parameters")]
+  [Tooltip("How high the player can jump")]
   [SerializeField] private float maxJumpHeight = 6.0f;
+  [Tooltip("How long the player ascends")]
   [SerializeField] private float jumpTimeToApex = 0.45f;
+  [Tooltip("How long the player descends")]
   [SerializeField] private float jumpTimeToFall = 0.2f;
   [Tooltip("Distance before fall animation is triggered")]
   [SerializeField] private float fallHeight = 0.075f;
 
   [Header("Miscellaneous")]
   // Declare reference variables
+  [Tooltip("Where held items attach to player's mouth")]
   [SerializeField] private Transform mouthAttachmentPoint;
   private PlayerInput playerInput;
   private CharacterController characterController;
@@ -54,11 +62,13 @@ public class PlayerController : MonoBehaviour
   public bool isInteractPressed;
   InputAction interactAction;
 
-  private PlayerAudio playerAudio;
+  // Input Overrides
   private float overrideSpeed;
   private float overrideRotationSpeed;
-  private Vector3? overrideDestination;
-  private Vector3? overrideRotation;
+  private Vector3? overrideDestination = null;
+  private Vector3? overrideRotation = null;
+
+  private PlayerAudio playerAudio;
   private PlayerAnimation interactionAnimation;
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
@@ -111,7 +121,7 @@ public class PlayerController : MonoBehaviour
     interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
   }
 
-  void initAnimatorReferences()
+  private void initAnimatorReferences()
   {
     isMovingHash = Animator.StringToHash("isMoving");
     isRunningHash = Animator.StringToHash("isRunning");
@@ -119,36 +129,36 @@ public class PlayerController : MonoBehaviour
     isFallingHash = Animator.StringToHash("isFalling");
   }
 
-  void initComponentReferences()
+  private void initComponentReferences()
   {
     characterController = GetComponent<CharacterController>();
     animator = GetComponent<Animator>();
     playerAudio = GetComponent<PlayerAudio>();
   }
 
-  void initClassInstances()
+  private void initClassInstances()
   {
     playerInput = new PlayerInput();
   }
 
-  void onJump(InputAction.CallbackContext context)
+  private void onJump(InputAction.CallbackContext context)
   {
     isJumpPressed = context.ReadValueAsButton();
     if (context.phase == InputActionPhase.Canceled) cancelJump();
   }
 
-  void onRun(InputAction.CallbackContext context)
+  private void onRun(InputAction.CallbackContext context)
   {
     isRunPressed = context.ReadValueAsButton();
   }
 
-  void onInteract(InputAction.CallbackContext context)
+  private void onInteract(InputAction.CallbackContext context)
   {
     interactAction = context.action;
     isInteractPressed = context.performed;
   }
 
-  void onMovementInput(InputAction.CallbackContext context)
+  private void onMovementInput(InputAction.CallbackContext context)
   {
     currentMovementInput = context.ReadValue<Vector2>();
     currentMovement.x = currentMovementInput.x;
@@ -156,26 +166,9 @@ public class PlayerController : MonoBehaviour
     isMovementPressed = currentMovementInput.x != zero || currentMovementInput.y != zero;
   }
 
-  private float getGravity()
-  {
-    float timeToFall = isFalling() ? jumpTimeToFall : jumpTimeToApex;
-
-    return (-2 * maxJumpHeight) / Mathf.Pow(timeToFall, 2);
-  }
-
-  private float getJumpVelocity()
-  {
-    return (2 * maxJumpHeight) / jumpTimeToApex;
-  }
-
-  private float getSpeedMultiplier()
-  {
-    return isRunPressed ? runMultiplier : walkMultiplier;
-  }
-
   private void animateMove()
   {
-    animator.SetBool("isMoving", isMovementPressed || overrideDestination != null);
+    animator.SetBool("isMoving", this.IsPlayerMoving);
     animator.SetBool("isRunning", isRunPressed);
   }
 
@@ -196,7 +189,7 @@ public class PlayerController : MonoBehaviour
     else
     {
       float previousVelocityY = currentVerticalMovement.y;
-      float newVelocityY = currentVerticalMovement.y + (getGravity() * Time.deltaTime);
+      float newVelocityY = currentVerticalMovement.y + (this.Gravity * Time.deltaTime);
       float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
 
       currentVerticalMovement.y = nextVelocityY;
@@ -226,7 +219,7 @@ public class PlayerController : MonoBehaviour
       animator.SetBool(isJumpingHash, true);
       isJumpAnimating = true;
       isJumping = true;
-      currentVerticalMovement.y = getJumpVelocity();
+      currentVerticalMovement.y = this.JumpVelocity;
     }
     else if (hasLanded)
     {
@@ -278,98 +271,51 @@ public class PlayerController : MonoBehaviour
 
   private void Move()
   {
-    Vector3? motionVector;
-    float speedMultiplier = getSpeedMultiplier();
-
-    if (overrideDestination != null)
-    {
-      motionVector = CalculateOverrideMotion();
-      transform.LookAt((Vector3)overrideDestination);
-    }
-    else
-    {
-      // Convert horizontal input to worldspace
-      Vector3 cameraRelativeMotion = currentMovement;
-
-      // apply horizontal speed multiplers
-      cameraRelativeMotion.x *= speedMultiplier;
-      cameraRelativeMotion.z *= speedMultiplier;
-
-      // translate to camera relative direction
-      cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
-      // apply jump/gravity
-      cameraRelativeMotion += currentVerticalMovement;
-      motionVector = cameraRelativeMotion * Time.deltaTime;
-    }
-
-    if (motionVector != null)
-    {
-      characterController.Move((Vector3)motionVector);
-    }
-
+    Translate();
     Rotate();
     animateMove();
   }
 
-  private void Rotate()
+  private void Translate()
   {
-    Quaternion targetRotation;
-    Quaternion currentRotation = transform.rotation;
-    Vector3 lookTarget;
-    float rotationSpeed = rotationFactorPerFrame;
+    if (!this.IsPlayerMoving) return;
+    Vector3? motionVector;
 
-    if (!isMovementPressed && overrideRotation == null) return;
-
-    if (overrideRotation != null)
+    if (overrideDestination != null)
     {
-      lookTarget = (Vector3)overrideRotation;
-      rotationSpeed = overrideRotationSpeed;
-
-      // translate target to rotation
-      targetRotation = Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
-
-
-      float distance = Quaternion.Angle(transform.rotation, targetRotation);
-      bool isAtDestination = distance < 1;
-      Debug.Log(distance);
-      Debug.Log(isAtDestination);
-
-      if (isAtDestination)
-      {
-        overrideRotation = null;
-        overrideRotationSpeed = default;
-        return;
-      }
-      // set overrideRotation as target
+      transform.LookAt((Vector3)overrideDestination);
+      motionVector = this.OverrideToMotion;
     }
     else
     {
-      // translate input to target
-      lookTarget = Camera.main.transform.TransformVector(currentMovement);
-      lookTarget.y = zero; // So we don't look up or down
-      // translate target to rotation
-      targetRotation = Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
+      motionVector = this.InputToMotion;
     }
 
+    if (motionVector == null) return;
 
-    // rotate transform
-    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+    characterController.Move((Vector3)motionVector);
   }
 
-  private Vector3? CalculateOverrideMotion()
+  private void Rotate()
   {
-    if (overrideDestination == null) return null;
+    if (!this.IsPlayerTurning) return;
 
-    bool isAtDestination = Vector3.Distance(transform.position, (Vector3)overrideDestination) < 0.1f;
-    if (isAtDestination)
+    float rotationSpeed = rotationFactorPerFrame;
+    Quaternion currentRotation = transform.rotation;
+    Quaternion targetRotation;
+
+    if (overrideRotation != null)
     {
-      overrideDestination = null;
-      PlayAnimation(interactionAnimation);
-      return null;
+      rotationSpeed = overrideRotationSpeed;
+      targetRotation = this.OverrideTargetRotation;
+      ClearOverrideWhenDone(targetRotation);
+    }
+    else
+    {
+      targetRotation = this.InputTargetRotation;
     }
 
-    Vector3 targetPosition = Vector3.MoveTowards(transform.position, (Vector3)overrideDestination, overrideSpeed);
-    return targetPosition - transform.position;
+    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
   }
 
   public void OverrideMovement(Vector3 targetPosition, float targetSpeed)
@@ -481,16 +427,140 @@ public class PlayerController : MonoBehaviour
         animator.Play("Pee", -1);
         break;
       default:
+        Debug.Log("No animation configured in PlayerController");
         break;
     }
   }
 
-  // Animation helper
+  // Allows animation event to trigger a 180 Turn
   public void TurnAround()
   {
-    Vector3 lookTarget = -transform.forward;
-
-
-    overrideRotation = lookTarget;
+    overrideRotation = -transform.forward;
   }
+
+
+  /**
+   * Utility methods below
+   * Collecting these simple getters below.
+   * They can be moved to a helper class if the mood strikes.
+   */
+
+  private bool IsPlayerMoving
+  {
+    get
+    {
+      return isMovementPressed || overrideDestination.HasValue;
+    }
+  }
+
+  private bool IsPlayerTurning
+  {
+    get
+    {
+      return isMovementPressed || overrideRotation != null;
+    }
+  }
+
+  private float SpeedMultiplier
+  {
+    get
+    {
+      return isRunPressed ? runMultiplier : walkMultiplier;
+    }
+  }
+
+  private float Gravity
+  {
+    get
+    {
+      float timeToFall = isFalling() ? jumpTimeToFall : jumpTimeToApex;
+      return (-2 * maxJumpHeight) / Mathf.Pow(timeToFall, 2);
+    }
+  }
+
+  private float JumpVelocity
+  {
+    get
+    {
+      return (2 * maxJumpHeight) / jumpTimeToApex;
+    }
+  }
+
+  private Quaternion InputTargetRotation
+  {
+    get
+    {
+      Vector3 lookTarget;
+
+      lookTarget = Camera.main.transform.TransformVector(currentMovement);
+      lookTarget.y = zero; // So we don't look up or down
+
+      return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
+    }
+  }
+
+  private Quaternion OverrideTargetRotation
+  {
+    get
+    {
+      Vector3 lookTarget = (Vector3)overrideRotation;
+
+      // translate target to rotation
+      return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
+    }
+  }
+
+  private void ClearOverrideWhenDone(Quaternion targetRotation)
+  {
+    float distance = Quaternion.Angle(transform.rotation, targetRotation);
+    bool isAtDestination = distance < 1;
+
+    if (isAtDestination)
+    {
+      overrideRotation = null;
+      overrideRotationSpeed = new float();
+      return;
+    }
+  }
+
+
+  private Vector3 InputToMotion
+  {
+    get
+    {
+      Vector3 cameraRelativeMotion = currentMovement;
+
+      // apply horizontal speed multiplers
+      cameraRelativeMotion.x *= this.SpeedMultiplier;
+      cameraRelativeMotion.z *= this.SpeedMultiplier;
+
+      // translate to camera relative direction
+      cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+      // apply jump/gravity
+      cameraRelativeMotion += currentVerticalMovement;
+
+      return cameraRelativeMotion * Time.deltaTime;
+    }
+  }
+
+  private Vector3? OverrideToMotion
+  {
+    get
+    {
+
+      if (overrideDestination == null) return null;
+
+      bool isAtDestination = Vector3.Distance(transform.position, (Vector3)overrideDestination) < 0.1f;
+      if (isAtDestination)
+      {
+        overrideDestination = null;
+        PlayAnimation(interactionAnimation);
+        return null;
+      }
+
+      Vector3 targetPosition = Vector3.MoveTowards(transform.position, (Vector3)overrideDestination, overrideSpeed);
+      return targetPosition - transform.position;
+    }
+  }
+  // End Utilities
 }
