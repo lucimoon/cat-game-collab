@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
   // Variables to store player input values
   private Vector3 currentMovementInput;
   private Vector3 currentVerticalMovement = new Vector3();
-  private Vector3 currentMovement;
+  public Vector3 currentMovement;
   private bool isMovementPressed;
   private bool isRunPressed;
 
@@ -73,12 +73,17 @@ public class PlayerController : MonoBehaviour
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
+  // Services
+  public IUnityService UnityService;
+  public float test = 0f;
+
   void Awake()
   {
     initAnimatorReferences();
-    initClassInstances();
+    // initClassInstances();
     initComponentReferences();
-    initPlayerInput();
+    // initPlayerInput();
+    if (UnityService == null) UnityService = new UnityService();
   }
 
   void Update()
@@ -89,37 +94,37 @@ public class PlayerController : MonoBehaviour
     interact();
   }
 
-  void OnEnable()
-  {
-    playerInput.CharacterControls.Enable();
-  }
+  // void OnEnable()
+  // {
+  //   playerInput.CharacterControls.Enable();
+  // }
 
-  void OnDisable()
-  {
-    playerInput.CharacterControls.Disable();
-  }
+  // void OnDisable()
+  // {
+  //   playerInput.CharacterControls.Disable();
+  // }
 
-  void initPlayerInput()
-  {
-    playerInput.CharacterControls.Move.started += onMovementInput;
-    playerInput.CharacterControls.Move.canceled += onMovementInput;
-    playerInput.CharacterControls.Move.performed += onMovementInput;
-    playerInput.CharacterControls.Run.started += onRun;
-    playerInput.CharacterControls.Run.canceled += onRun;
-    playerInput.CharacterControls.Jump.started += onJump;
-    playerInput.CharacterControls.Jump.canceled += onJump;
+  // void initPlayerInput()
+  // {
+  //   playerInput.CharacterControls.Move.started += onMovementInput;
+  //   playerInput.CharacterControls.Move.canceled += onMovementInput;
+  //   playerInput.CharacterControls.Move.performed += onMovementInput;
+  //   playerInput.CharacterControls.Run.started += onRun;
+  //   playerInput.CharacterControls.Run.canceled += onRun;
+  //   playerInput.CharacterControls.Jump.started += onJump;
+  //   playerInput.CharacterControls.Jump.canceled += onJump;
 
-    // Under interaction umbrella
-    playerInput.CharacterControls.UsePaw.performed += onInteract;
-    playerInput.CharacterControls.UsePaw.canceled += onInteract;
-    interactionBindings.Add("UsePaw", playerInput.CharacterControls.UsePaw.GetBindingDisplayString(0));
-    playerInput.CharacterControls.UseMouth.performed += onInteract;
-    playerInput.CharacterControls.UseMouth.canceled += onInteract;
-    interactionBindings.Add("UseMouth", playerInput.CharacterControls.UseMouth.GetBindingDisplayString(0));
-    playerInput.CharacterControls.UseBody.performed += onInteract;
-    playerInput.CharacterControls.UseBody.canceled += onInteract;
-    interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
-  }
+  //   // Under interaction umbrella
+  //   playerInput.CharacterControls.UsePaw.performed += onInteract;
+  //   playerInput.CharacterControls.UsePaw.canceled += onInteract;
+  //   interactionBindings.Add("UsePaw", playerInput.CharacterControls.UsePaw.GetBindingDisplayString(0));
+  //   playerInput.CharacterControls.UseMouth.performed += onInteract;
+  //   playerInput.CharacterControls.UseMouth.canceled += onInteract;
+  //   interactionBindings.Add("UseMouth", playerInput.CharacterControls.UseMouth.GetBindingDisplayString(0));
+  //   playerInput.CharacterControls.UseBody.performed += onInteract;
+  //   playerInput.CharacterControls.UseBody.canceled += onInteract;
+  //   interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
+  // }
 
   private void initAnimatorReferences()
   {
@@ -136,29 +141,29 @@ public class PlayerController : MonoBehaviour
     playerAudio = GetComponent<PlayerAudio>();
   }
 
-  private void initClassInstances()
-  {
-    playerInput = new PlayerInput();
-  }
+  // private void initClassInstances()
+  // {
+  //   playerInput = new PlayerInput();
+  // }
 
-  private void onJump(InputAction.CallbackContext context)
+  public void onJump(InputAction.CallbackContext context)
   {
     isJumpPressed = context.ReadValueAsButton();
     if (context.phase == InputActionPhase.Canceled) cancelJump();
   }
 
-  private void onRun(InputAction.CallbackContext context)
+  public void onRun(InputAction.CallbackContext context)
   {
     isRunPressed = context.ReadValueAsButton();
   }
 
-  private void onInteract(InputAction.CallbackContext context)
+  public void onInteract(InputAction.CallbackContext context)
   {
     interactAction = context.action;
     isInteractPressed = context.performed;
   }
 
-  private void onMovementInput(InputAction.CallbackContext context)
+  public void onMovementInput(InputAction.CallbackContext context)
   {
     currentMovementInput = context.ReadValue<Vector2>();
     currentMovement.x = currentMovementInput.x;
@@ -189,7 +194,7 @@ public class PlayerController : MonoBehaviour
     else
     {
       float previousVelocityY = currentVerticalMovement.y;
-      float newVelocityY = currentVerticalMovement.y + (this.Gravity * Time.deltaTime);
+      float newVelocityY = currentVerticalMovement.y + (this.Gravity * UnityService.GetDeltaTime());
       float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
 
       currentVerticalMovement.y = nextVelocityY;
@@ -278,7 +283,6 @@ public class PlayerController : MonoBehaviour
 
   private void Translate()
   {
-    if (!this.IsPlayerMoving) return;
     Vector3? motionVector;
 
     if (overrideDestination != null)
@@ -315,7 +319,7 @@ public class PlayerController : MonoBehaviour
       targetRotation = this.InputTargetRotation;
     }
 
-    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * UnityService.GetDeltaTime());
   }
 
   public void OverrideMovement(Vector3 targetPosition, float targetSpeed)
@@ -391,7 +395,6 @@ public class PlayerController : MonoBehaviour
 
   private void Meow()
   {
-    Debug.Log("Meow");
     // Default Animation and Audio lives here...
     animator.Play("Meow", -1);
     playerAudio.PlayMeow();
@@ -399,14 +402,12 @@ public class PlayerController : MonoBehaviour
 
   private void UsePaw()
   {
-    Debug.Log("UsePaw");
     gameObject.transform.Translate(Vector3.forward * pounceDistance, Space.Self);
     animator.SetTrigger("Pounce");
   }
 
   private void TakeRest()
   {
-    Debug.Log("TakeRest");
     animator.SetTrigger("Rest");
   }
 
@@ -492,7 +493,7 @@ public class PlayerController : MonoBehaviour
     {
       Vector3 lookTarget;
 
-      lookTarget = Camera.main.transform.TransformVector(currentMovement);
+      lookTarget = UnityService.LocalToWorldSpace(currentMovement);
       lookTarget.y = zero; // So we don't look up or down
 
       return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
@@ -535,11 +536,11 @@ public class PlayerController : MonoBehaviour
       cameraRelativeMotion.z *= this.SpeedMultiplier;
 
       // translate to camera relative direction
-      cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+      cameraRelativeMotion = UnityService.LocalToWorldSpace(cameraRelativeMotion);
       // apply jump/gravity
       cameraRelativeMotion += currentVerticalMovement;
 
-      return cameraRelativeMotion * Time.deltaTime;
+      return cameraRelativeMotion * UnityService.GetDeltaTime();
     }
   }
 

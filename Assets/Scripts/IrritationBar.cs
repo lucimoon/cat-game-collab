@@ -12,7 +12,7 @@ public class IrritationBar : MonoBehaviour
   public void UpdateIrritationBar()
   {
     float duration = 0.75f * (nonPlayerController.irritationScore / nonPlayerController.maxIrritation);
-    irritationBarImage.DOFillAmount(nonPlayerController.irritationScore / nonPlayerController.maxIrritation, duration);
+    // DOTween.To(() => irritationBarImage.fillAmount, (x) => irritationBarImage.fillAmount = x, nonPlayerController.irritationScore / nonPlayerController.maxIrritation, duration);
 
     Color red = new Color(0.6981f, 0.5160248f, 0.4625756f, 1f);
     Color green = new Color(0.494838f, 0.754717f, 0.6536991f, 1f);
@@ -29,6 +29,8 @@ public class IrritationBar : MonoBehaviour
       barColor = red;
     }
 
-    irritationBarImage.DOColor(barColor, duration);
+    // irritationBarImage.DO
+    // DOTween.To(() => irritationBarImage.color, (x) => irritationBarImage.color = x, nonPlayerController.irritationScore / nonPlayerController.maxIrritation, duration);
+    // irritationBarImage.DOColor(barColor, duration);
   }
 }
