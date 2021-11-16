@@ -80,9 +80,7 @@ public class PlayerController : MonoBehaviour
   void Awake()
   {
     initAnimatorReferences();
-    // initClassInstances();
     initComponentReferences();
-    // initPlayerInput();
     if (UnityService == null) UnityService = new UnityService();
   }
 
@@ -93,38 +91,6 @@ public class PlayerController : MonoBehaviour
     Move();
     interact();
   }
-
-  // void OnEnable()
-  // {
-  //   playerInput.CharacterControls.Enable();
-  // }
-
-  // void OnDisable()
-  // {
-  //   playerInput.CharacterControls.Disable();
-  // }
-
-  // void initPlayerInput()
-  // {
-  //   playerInput.CharacterControls.Move.started += onMovementInput;
-  //   playerInput.CharacterControls.Move.canceled += onMovementInput;
-  //   playerInput.CharacterControls.Move.performed += onMovementInput;
-  //   playerInput.CharacterControls.Run.started += onRun;
-  //   playerInput.CharacterControls.Run.canceled += onRun;
-  //   playerInput.CharacterControls.Jump.started += onJump;
-  //   playerInput.CharacterControls.Jump.canceled += onJump;
-
-  //   // Under interaction umbrella
-  //   playerInput.CharacterControls.UsePaw.performed += onInteract;
-  //   playerInput.CharacterControls.UsePaw.canceled += onInteract;
-  //   interactionBindings.Add("UsePaw", playerInput.CharacterControls.UsePaw.GetBindingDisplayString(0));
-  //   playerInput.CharacterControls.UseMouth.performed += onInteract;
-  //   playerInput.CharacterControls.UseMouth.canceled += onInteract;
-  //   interactionBindings.Add("UseMouth", playerInput.CharacterControls.UseMouth.GetBindingDisplayString(0));
-  //   playerInput.CharacterControls.UseBody.performed += onInteract;
-  //   playerInput.CharacterControls.UseBody.canceled += onInteract;
-  //   interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
-  // }
 
   private void initAnimatorReferences()
   {
@@ -140,11 +106,6 @@ public class PlayerController : MonoBehaviour
     animator = GetComponent<Animator>();
     playerAudio = GetComponent<PlayerAudio>();
   }
-
-  // private void initClassInstances()
-  // {
-  //   playerInput = new PlayerInput();
-  // }
 
   public void onJump(InputAction.CallbackContext context)
   {
