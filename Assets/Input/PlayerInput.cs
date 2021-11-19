@@ -65,6 +65,14 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Tap""
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""677ca15d-7b3e-4a49-b771-b1aefd01bf31"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
                 }
             ],
             ""bindings"": [
@@ -243,6 +251,17 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""action"": ""UseBody"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""24586a83-f44f-42a8-b047-d80cc1e493b6"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -284,6 +303,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         m_CharacterControls_UsePaw = m_CharacterControls.FindAction("UsePaw", throwIfNotFound: true);
         m_CharacterControls_UseMouth = m_CharacterControls.FindAction("UseMouth", throwIfNotFound: true);
         m_CharacterControls_UseBody = m_CharacterControls.FindAction("UseBody", throwIfNotFound: true);
+        m_CharacterControls_Look = m_CharacterControls.FindAction("Look", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
@@ -342,6 +362,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     private readonly InputAction m_CharacterControls_UsePaw;
     private readonly InputAction m_CharacterControls_UseMouth;
     private readonly InputAction m_CharacterControls_UseBody;
+    private readonly InputAction m_CharacterControls_Look;
     public struct CharacterControlsActions
     {
         private @PlayerInput m_Wrapper;
@@ -352,6 +373,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         public InputAction @UsePaw => m_Wrapper.m_CharacterControls_UsePaw;
         public InputAction @UseMouth => m_Wrapper.m_CharacterControls_UseMouth;
         public InputAction @UseBody => m_Wrapper.m_CharacterControls_UseBody;
+        public InputAction @Look => m_Wrapper.m_CharacterControls_Look;
         public InputActionMap Get() { return m_Wrapper.m_CharacterControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -379,6 +401,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @UseBody.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
                 @UseBody.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
                 @UseBody.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnUseBody;
+                @Look.started -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnLook;
+                @Look.performed -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnLook;
+                @Look.canceled -= m_Wrapper.m_CharacterControlsActionsCallbackInterface.OnLook;
             }
             m_Wrapper.m_CharacterControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -401,6 +426,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @UseBody.started += instance.OnUseBody;
                 @UseBody.performed += instance.OnUseBody;
                 @UseBody.canceled += instance.OnUseBody;
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
             }
         }
     }
@@ -446,6 +474,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         void OnUsePaw(InputAction.CallbackContext context);
         void OnUseMouth(InputAction.CallbackContext context);
         void OnUseBody(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
