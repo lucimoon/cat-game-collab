@@ -37,37 +37,36 @@ public class Interactable : MonoBehaviour
     }
   }
 
+#nullable enable
   protected virtual void MouthInteraction()
   {
-    Debug.Log("MouthInteraction");
     SafePlayOneShot(audioClips.Mouth);
   }
 
-#nullable enable
   protected virtual void MouthInteraction(Transform? mouthTransform)
   {
     SafePlayOneShot(audioClips.Mouth);
   }
-#nullable disable
 
   protected virtual void PawInteraction()
   {
-    Debug.Log("PawInteraction");
+    SafePlayOneShot(audioClips.Paw);
+  }
+
+  protected virtual void PawInteraction(Transform? playerTransform)
+  {
     SafePlayOneShot(audioClips.Paw);
   }
 
   protected virtual void BodyInteraction()
   {
-    Debug.Log("BodyInteraction");
     SafePlayOneShot(audioClips.Body);
   }
 
-#nullable enable
   protected virtual void BodyInteraction(Transform? playerTransform)
   {
     SafePlayOneShot(audioClips.Body);
   }
-#nullable disable
 
   public void ShowTooltip()
   {
@@ -84,7 +83,6 @@ public class Interactable : MonoBehaviour
     return HandleInteraction(interactionType, null);
   }
 
-#nullable enable
   public PlayerAnimation HandleInteraction(InteractionType interactionType, Transform? playerTransform)
   {
     // Loop through each attached NPC irritation reaction
@@ -100,7 +98,7 @@ public class Interactable : MonoBehaviour
         BodyInteraction(playerTransform);
         return playerAnimations.Body;
       case InteractionType.UsePaw:
-        PawInteraction();
+        PawInteraction(playerTransform);
         return playerAnimations.Paw;
       default:
         MouthInteraction(playerTransform);
