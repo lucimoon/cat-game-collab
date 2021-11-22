@@ -37,6 +37,11 @@ public class Interactable : MonoBehaviour
     }
   }
 
+  void OnTriggerExit(Collider otherCollider)
+  {
+    if (otherCollider.tag == "Player") HideTooltip();
+  }
+
 #nullable enable
   protected virtual void MouthInteraction()
   {

@@ -260,13 +260,14 @@ public class PlayerController : MonoBehaviour
     }
   }
 
-  void OnTriggerExit()
+  void OnTriggerExit(Collider otherCollider)
   {
-    // Note: This isn't triggered when Interactable in question is destroyed
-    // Hide the interaction tool tip
-    if (interactable != null) interactable.HideTooltip();
-    // When we leave, set the current interactable references to null.
-    interactable = null;
+    if (otherCollider.tag == "Interactable")
+    {
+      // Note: This isn't triggered when Interactable in question is destroyed
+      // When we leave, set the current interactable references to null.
+      interactable = null;
+    }
   }
 
   private void Move()
