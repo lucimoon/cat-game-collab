@@ -492,7 +492,8 @@ public class PlayerController : MonoBehaviour
     {
       Vector3 lookTarget;
 
-      lookTarget = Camera.main.transform.TransformVector(currentMovement);
+      lookTarget = transform.position - Camera.main.transform.position;
+
       lookTarget.y = zero; // So we don't look up or down
 
       return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
