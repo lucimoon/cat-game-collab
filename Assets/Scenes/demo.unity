@@ -6930,7 +6930,19 @@ MonoBehaviour:
     m_ActionId: 0f86ad33-566a-4460-88e8-5c75358e7e22
     m_ActionName: Character Controls/Run[/Keyboard/leftShift]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7616336124840435188, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
+        m_TargetAssemblyTypeName: FreeLookAddOn, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 5399bcad-325f-4698-a8b4-806dea877f44
     m_ActionName: Character Controls/Jump[/Keyboard/space]
   - m_PersistentCalls:
@@ -7685,7 +7697,7 @@ Transform:
   m_Children:
   - {fileID: 1981151915}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1083586111
 PrefabInstance:
@@ -10032,11 +10044,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7616336123950538436, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.15378761
+      value: 0.1537876
       objectReference: {fileID: 0}
     - target: {fileID: 7616336123950538436, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.1537876
+      value: -0.15378758
       objectReference: {fileID: 0}
     - target: {fileID: 7616336124840435193, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
       propertyPath: m_Name
@@ -10050,9 +10062,21 @@ PrefabInstance:
       propertyPath: m_LookAt
       value: 
       objectReference: {fileID: 2017714117}
+    - target: {fileID: 7616336124840435194, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
+      propertyPath: m_XAxis.m_MaxSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7616336124840435194, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
+      propertyPath: m_Lens.m_SensorSize.x
+      value: 1.8218884
+      objectReference: {fileID: 0}
+    - target: {fileID: 7616336124840435194, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
+      propertyPath: m_RecenterToTargetHeading.m_enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7616336124840435195, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7616336124840435195, guid: eb1691ba30f4976499d664a01f18bb68, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10126,6 +10150,14 @@ PrefabInstance:
     - target: {fileID: 4388073714150066771, guid: 9d813028828294718a448859ff97228b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 2.394
+      objectReference: {fileID: 0}
+    - target: {fileID: 4507319904530645202, guid: 9d813028828294718a448859ff97228b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 4507319904530645202, guid: 9d813028828294718a448859ff97228b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 50.27
       objectReference: {fileID: 0}
     - target: {fileID: 4762358246571012710, guid: 9d813028828294718a448859ff97228b, type: 3}
       propertyPath: m_Materials.Array.data[0]
