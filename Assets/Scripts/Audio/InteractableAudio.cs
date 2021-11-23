@@ -3,7 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class InteractableAudio
 {
-    public AudioClip Mouth;
-    public AudioClip Paw;
-    public AudioClip Body;
+  public AudioClip Mouth;
+  public AudioClip Paw;
+  public AudioClip Body;
 }

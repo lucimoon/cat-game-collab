@@ -226,13 +226,14 @@ public class PlayerController : MonoBehaviour
     }
   }
 
-  void OnTriggerExit()
+  void OnTriggerExit(Collider otherCollider)
   {
-    // Note: This isn't triggered when Interactable in question is destroyed
-    // Hide the interaction tool tip
-    if (interactable != null) interactable.HideTooltip();
-    // When we leave, set the current interactable references to null.
-    interactable = null;
+    if (otherCollider.tag == "Interactable")
+    {
+      // Note: This isn't triggered when Interactable in question is destroyed
+      // When we leave, set the current interactable references to null.
+      interactable = null;
+    }
   }
 
   private void Move()
@@ -314,6 +315,7 @@ public class PlayerController : MonoBehaviour
     {
       case "UsePaw":
         interactionType = InteractionType.UsePaw;
+        interactionTransform = transform;
         break;
       case "UseBody":
         interactionType = InteractionType.UseBody;
@@ -341,7 +343,7 @@ public class PlayerController : MonoBehaviour
     switch (interactionName)
     {
       case "UsePaw":
-        UsePaw();
+        Pounce();
         break;
       case "UseBody":
         TakeRest();
@@ -361,7 +363,7 @@ public class PlayerController : MonoBehaviour
     playerAudio.PlayMeow();
   }
 
-  private void UsePaw()
+  private void Pounce()
   {
     gameObject.transform.Translate(Vector3.forward * pounceDistance, Space.Self);
     animator.SetTrigger("Pounce");
@@ -387,6 +389,9 @@ public class PlayerController : MonoBehaviour
         break;
       case PlayerAnimation.Pee:
         animator.Play("Pee", -1);
+        break;
+      case PlayerAnimation.Scratch:
+        animator.Play("Scratch", -1);
         break;
       default:
         Debug.Log("No animation configured in PlayerController");
@@ -465,7 +470,8 @@ public class PlayerController : MonoBehaviour
   {
     get
     {
-      Vector3 lookTarget = (Vector3)overrideRotation;
+      Vector3 lookTarget = (Vector3)overrideRotation - transform.position;
+      lookTarget.y = 0f;
 
       // translate target to rotation
       return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
@@ -475,7 +481,7 @@ public class PlayerController : MonoBehaviour
   private void ClearOverrideWhenDone(Quaternion targetRotation)
   {
     float distance = Quaternion.Angle(transform.rotation, targetRotation);
-    bool isAtDestination = distance < 1;
+    bool isAtDestination = distance < .1;
 
     if (isAtDestination)
     {
