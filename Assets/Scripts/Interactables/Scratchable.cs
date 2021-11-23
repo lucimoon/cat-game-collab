@@ -12,7 +12,7 @@ public class Scratchable : Interactable
   [Tooltip("How fast player moves to interactionTarget")]
   [Range(0f, 1f)]
   [SerializeField] private float speed = 0.1f;
-  [Tooltip("How fast player turns around mid-animation")]
+  [Tooltip("How fast player faces target")]
   [Range(1f, 10f)]
   [SerializeField] private float rotationSpeed = 6.5f;
 
@@ -48,6 +48,6 @@ public class Scratchable : Interactable
 
   private void SetAnimation()
   {
-    playerAnimations.Body = PlayerAnimation.Pee;
+    playerAnimations.Paw = PlayerAnimation.Scratch;
   }
 }
