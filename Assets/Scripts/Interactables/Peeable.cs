@@ -18,7 +18,7 @@ public class Peeable : Interactable
   protected override void Start()
   {
     base.Start();
-    playerAnimations.Body = PlayerAnimation.Pee;
+    this.playerAnimations.Body = PlayerAnimation.Pee;
   }
 
   protected override void BodyInteraction(Transform? playerTransform)

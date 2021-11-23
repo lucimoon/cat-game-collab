@@ -101,13 +101,13 @@ public class Interactable : MonoBehaviour
     {
       case InteractionType.UseBody:
         BodyInteraction(playerTransform);
-        return playerAnimations.Body;
+        return this.playerAnimations.Body;
       case InteractionType.UsePaw:
         PawInteraction(playerTransform);
-        return playerAnimations.Paw;
+        return this.playerAnimations.Paw;
       default:
         MouthInteraction(playerTransform);
-        return playerAnimations.Mouth;
+        return this.playerAnimations.Mouth;
     }
   }
 #nullable disable

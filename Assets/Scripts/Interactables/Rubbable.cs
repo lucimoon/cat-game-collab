@@ -23,12 +23,13 @@ public class Rubbable : Interactable
     SetAnimation();
   }
 
-  protected override void PawInteraction(Transform? playerTransform)
+  protected override void BodyInteraction(Transform? playerTransform)
   {
     PlayerController? controller;
 
     if (playerTransform == null) return;
     if (interactionTarget == null) interactionTarget = transform;
+
     Vector3 finalTarget = interactionTarget.position;
     finalTarget.y = playerTransform.position.y;
 
@@ -48,6 +49,6 @@ public class Rubbable : Interactable
 
   private void SetAnimation()
   {
-    playerAnimations.Body = PlayerAnimation.Pee;
+    this.playerAnimations.Body = PlayerAnimation.Rub;
   }
 }

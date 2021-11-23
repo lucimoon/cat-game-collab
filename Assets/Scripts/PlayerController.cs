@@ -431,6 +431,9 @@ public class PlayerController : MonoBehaviour
       case PlayerAnimation.Scratch:
         animator.Play("Scratch", -1);
         break;
+      case PlayerAnimation.Rub:
+        animator.Play("Rub", -1);
+        break;
       default:
         Debug.Log("No animation configured in PlayerController");
         break;
