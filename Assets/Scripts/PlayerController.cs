@@ -32,7 +32,8 @@ public class PlayerController : MonoBehaviour
   private PlayerInput playerInput;
   private CharacterController characterController;
   private Animator animator;
-  private Interactable interactable;
+  private List<Interactable> interactables = new List<Interactable>();
+  private InteractableManager interactableManager = new InteractableManager();
 
   // Variables to store optimized setter/getter parameter IDs
   private int isFallingHash;
@@ -238,7 +239,10 @@ public class PlayerController : MonoBehaviour
 
     if (!shouldInteract) return;
 
-    if (interactable != null)
+
+    // TODO: update this to allow default reactions when interactables are around with no matching behavior.
+    // if no interactables.mouth
+    if (interactableManager.Count != 0)
     {
       UseObjectInteraction(interactAction.name);
       return;
@@ -250,13 +254,13 @@ public class PlayerController : MonoBehaviour
   // To-do: This should probably be updated to a method that tests proximity to an interactable
   void OnTriggerEnter(Collider other)
   {
+    // Add interactables to a list if they're not already there.
     GameObject interactedObject = other.gameObject;
 
     if (interactedObject.CompareTag("Interactable"))
     {
       // Set our script reference to our newly collided interactable gameobject
-      interactable = interactedObject.GetComponent<Interactable>();
-      interactable.ShowTooltip();
+      interactableManager.AddInteractable(interactedObject.GetComponent<Interactable>());
     }
   }
 
@@ -266,7 +270,7 @@ public class PlayerController : MonoBehaviour
     {
       // Note: This isn't triggered when Interactable in question is destroyed
       // When we leave, set the current interactable references to null.
-      interactable = null;
+      interactableManager.RemoveInteractable(otherCollider.GetComponent<Interactable>());
     }
   }
 
@@ -360,6 +364,9 @@ public class PlayerController : MonoBehaviour
         break;
     }
 
+    // find closest interactable with valid Interaction Type
+
+
     /*
     * This may be a weird pattern. We're
     * sneakily returning a PlayerAnimation from
@@ -369,6 +376,7 @@ public class PlayerController : MonoBehaviour
     * cancels this playback, then we attempt to play it
     * again when they arrive at the destination.
     */
+    Interactable interactable = interactableManager.ClosestByType(transform.position, interactionType);
     interactionAnimation = interactable.HandleInteraction(interactionType, interactionTransform);
     PlayAnimation(interactionAnimation);
   }
@@ -572,4 +580,149 @@ public class PlayerController : MonoBehaviour
     }
   }
   // End Utilities
+}
+
+public class InteractableManager
+{
+  private int MouthCounter = 0;
+  private int BodyCounter = 0;
+  private int PawCounter = 0;
+  private List<Interactable> interactables = new List<Interactable>();
+
+  public void AddInteractable(Interactable interactable)
+  {
+    interactables.Add(interactable);
+    IncrementCounts(interactable);
+  }
+
+  public void RemoveInteractable(Interactable interactable)
+  {
+    if (interactables.Contains(interactable))
+    {
+      interactables.Remove(interactable);
+      DecrementCounts(interactable);
+    }
+  }
+
+  public int Count
+  {
+    get
+    {
+      return interactables.Count;
+    }
+  }
+
+  public int CountByType(InteractionType type)
+  {
+    switch (type)
+    {
+      case InteractionType.UseBody:
+        return BodyCounter;
+      case InteractionType.UseMouth:
+        return MouthCounter;
+      case InteractionType.UsePaw:
+        return PawCounter;
+      default:
+        return 0;
+    }
+  }
+
+  public Interactable ClosestByType(Vector3 target, InteractionType type)
+  {
+    if (CountByType(type) == 0) return default;
+
+    float ARBITRARILY_FAR_DISTANCE = 1000;
+    float shortestDistance = ARBITRARILY_FAR_DISTANCE;
+    Interactable closestInteractable = default;
+
+    interactables.ForEach((Interactable interactable) =>
+    {
+      if (interactable.HasType(type))
+      {
+        float measuredDistance = Vector3.Distance(interactable.transform.position, target);
+
+        if (measuredDistance < shortestDistance)
+        {
+          shortestDistance = measuredDistance;
+          closestInteractable = interactable;
+        }
+      }
+    });
+
+    return closestInteractable;
+  }
+
+  private void IncrementByType(InteractionType type)
+  {
+    switch (type)
+    {
+      case InteractionType.UseBody:
+        BodyCounter++;
+        break;
+      case InteractionType.UseMouth:
+        MouthCounter++;
+        break;
+      case InteractionType.UsePaw:
+        PawCounter++;
+        break;
+      default:
+        break;
+    }
+  }
+
+  private void DecrementByType(InteractionType type)
+  {
+    switch (type)
+    {
+      case InteractionType.UseBody:
+        BodyCounter--;
+        break;
+      case InteractionType.UseMouth:
+        MouthCounter--;
+        break;
+      case InteractionType.UsePaw:
+        PawCounter--;
+        break;
+      default:
+        break;
+    }
+  }
+
+  private void IncrementCounts(Interactable interactable)
+  {
+    if (interactable.playerAnimations.Body != PlayerAnimation.None)
+    {
+      IncrementByType(InteractionType.UseBody);
+    }
+    if (interactable.playerAnimations.Mouth != PlayerAnimation.None)
+    {
+      IncrementByType(InteractionType.UseMouth);
+    }
+    if (interactable.playerAnimations.Paw != PlayerAnimation.None)
+    {
+      IncrementByType(InteractionType.UsePaw);
+    }
+  }
+
+  private void DecrementCounts(Interactable interactable)
+  {
+    if (interactable.playerAnimations.Body != PlayerAnimation.None)
+    {
+      DecrementByType(InteractionType.UseBody);
+    }
+    if (interactable.playerAnimations.Mouth != PlayerAnimation.None)
+    {
+      DecrementByType(InteractionType.UseMouth);
+    }
+    if (interactable.playerAnimations.Paw != PlayerAnimation.None)
+    {
+      DecrementByType(InteractionType.UsePaw);
+    }
+  }
+
+  private float FindShortestDistance(Vector3 pointA, Vector3 pointB, float distanceToBeat)
+  {
+    float measuredDistance = Vector3.Distance(pointA, pointB);
+    return (measuredDistance < distanceToBeat) ? measuredDistance : distanceToBeat;
+  }
 }

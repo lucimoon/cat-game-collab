@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 4118178676297140305}
   - component: {fileID: 5817131452231843731}
   - component: {fileID: 8035709764104611900}
-  - component: {fileID: 5088030268496216579}
   m_Layer: 7
   m_Name: ScratchZone
   m_TagString: Untagged
@@ -199,8 +198,6 @@ MonoBehaviour:
   interactionOptionList:
   - interactionTipText: Scratch
     interactionType: 0
-  - interactionTipText: Rub
-    interactionType: 2
 --- !u!114 &8035709764104611900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,41 +212,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInteractions: 1
   isDestroyed: 0
-  irritationReactionList: []
-  audioClips:
-    Mouth: {fileID: 0}
-    Paw: {fileID: 0}
-    Body: {fileID: 0}
   playerAnimations:
     Mouth: 0
     Paw: 10
     Body: 0
-  interactionTarget: {fileID: 4163032905962402988}
-  speed: 0.1
-  rotationSpeed: 6.5
---- !u!114 &5088030268496216579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8700733953871947983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c9b31119cf534ed0ae01b695d0232eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allowInteractions: 1
-  isDestroyed: 0
   irritationReactionList: []
   audioClips:
     Mouth: {fileID: 0}
     Paw: {fileID: 0}
     Body: {fileID: 0}
-  playerAnimations:
-    Mouth: 0
-    Paw: 0
-    Body: 8
   interactionTarget: {fileID: 4163032905962402988}
   speed: 0.1
   rotationSpeed: 6.5

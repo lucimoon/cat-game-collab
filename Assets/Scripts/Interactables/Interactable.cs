@@ -7,9 +7,9 @@ public class Interactable : MonoBehaviour
 {
   public bool allowInteractions = true;
   public bool isDestroyed = false;
+  public InteractablePlayerAnimation playerAnimations;
   [SerializeField] private List<IrritationReaction> irritationReactionList = new List<IrritationReaction>();
   [SerializeField] private InteractableAudio audioClips;
-  [SerializeField] protected InteractablePlayerAnimation playerAnimations;
 
   [System.Serializable]
   public struct IrritationReaction
@@ -35,6 +35,11 @@ public class Interactable : MonoBehaviour
     {
       interactableUI.DestroyInteractionTip();
     }
+  }
+
+  void OnTriggerEnter(Collider otherCollider)
+  {
+    if (otherCollider.tag == "Player") ShowTooltip();
   }
 
   void OnTriggerExit(Collider otherCollider)
@@ -111,6 +116,45 @@ public class Interactable : MonoBehaviour
     }
   }
 #nullable disable
+
+  public bool IsBody
+  {
+    get
+    {
+      return playerAnimations.Body != PlayerAnimation.None;
+    }
+  }
+
+  public bool IsMouth
+  {
+    get
+    {
+      return playerAnimations.Mouth != PlayerAnimation.None;
+    }
+  }
+
+  public bool IsPaw
+  {
+    get
+    {
+      return playerAnimations.Paw != PlayerAnimation.None;
+    }
+  }
+
+  public bool HasType(InteractionType type)
+  {
+    switch (type)
+    {
+      case InteractionType.UseBody:
+        return playerAnimations.Body != PlayerAnimation.None;
+      case InteractionType.UseMouth:
+        return playerAnimations.Mouth != PlayerAnimation.None;
+      case InteractionType.UsePaw:
+        return playerAnimations.Paw != PlayerAnimation.None;
+      default:
+        return false;
+    }
+  }
 
   // UpdateIrritation triggered by InteractableController
   private void SetIrritationScore(IrritationReaction irritation)
