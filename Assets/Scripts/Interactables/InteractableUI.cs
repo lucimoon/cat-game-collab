@@ -90,8 +90,6 @@ public class InteractableUI : MonoBehaviour
 
   private string KeyBindingText(InteractionType interactionType)
   {
-    if (interactionType == InteractionType.UseMouth) return interactionBindings["UseMouth"];
-    if (interactionType == InteractionType.UseBody) return interactionBindings["UseBody"];
-    return interactionBindings["UsePaw"];
+    return interactionType.ToString();
   }
 }
