@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
   // Variables to store player input values
   private Vector3 currentMovementInput;
   private Vector3 currentVerticalMovement = new Vector3();
-  private Vector3 currentMovement;
+  public Vector3 currentMovement;
   private bool isMovementPressed;
   private bool isRunPressed;
 
@@ -73,12 +73,15 @@ public class PlayerController : MonoBehaviour
 
   public Dictionary<string, string> interactionBindings = new Dictionary<string, string>();
 
+  // Services
+  public IUnityService UnityService;
+  public float test = 0f;
+
   void Awake()
   {
     initAnimatorReferences();
-    initClassInstances();
     initComponentReferences();
-    initPlayerInput();
+    if (UnityService == null) UnityService = new UnityService();
   }
 
   void Update()
@@ -87,38 +90,6 @@ public class PlayerController : MonoBehaviour
     jump();
     Move();
     interact();
-  }
-
-  void OnEnable()
-  {
-    playerInput.CharacterControls.Enable();
-  }
-
-  void OnDisable()
-  {
-    playerInput.CharacterControls.Disable();
-  }
-
-  void initPlayerInput()
-  {
-    playerInput.CharacterControls.Move.started += onMovementInput;
-    playerInput.CharacterControls.Move.canceled += onMovementInput;
-    playerInput.CharacterControls.Move.performed += onMovementInput;
-    playerInput.CharacterControls.Run.started += onRun;
-    playerInput.CharacterControls.Run.canceled += onRun;
-    playerInput.CharacterControls.Jump.started += onJump;
-    playerInput.CharacterControls.Jump.canceled += onJump;
-
-    // Under interaction umbrella
-    playerInput.CharacterControls.UsePaw.performed += onInteract;
-    playerInput.CharacterControls.UsePaw.canceled += onInteract;
-    interactionBindings.Add("UsePaw", playerInput.CharacterControls.UsePaw.GetBindingDisplayString(0));
-    playerInput.CharacterControls.UseMouth.performed += onInteract;
-    playerInput.CharacterControls.UseMouth.canceled += onInteract;
-    interactionBindings.Add("UseMouth", playerInput.CharacterControls.UseMouth.GetBindingDisplayString(0));
-    playerInput.CharacterControls.UseBody.performed += onInteract;
-    playerInput.CharacterControls.UseBody.canceled += onInteract;
-    interactionBindings.Add("UseBody", playerInput.CharacterControls.UseBody.GetBindingDisplayString(0));
   }
 
   private void initAnimatorReferences()
@@ -136,29 +107,24 @@ public class PlayerController : MonoBehaviour
     playerAudio = GetComponent<PlayerAudio>();
   }
 
-  private void initClassInstances()
-  {
-    playerInput = new PlayerInput();
-  }
-
-  private void onJump(InputAction.CallbackContext context)
+  public void onJump(InputAction.CallbackContext context)
   {
     isJumpPressed = context.ReadValueAsButton();
     if (context.phase == InputActionPhase.Canceled) cancelJump();
   }
 
-  private void onRun(InputAction.CallbackContext context)
+  public void onRun(InputAction.CallbackContext context)
   {
     isRunPressed = context.ReadValueAsButton();
   }
 
-  private void onInteract(InputAction.CallbackContext context)
+  public void onInteract(InputAction.CallbackContext context)
   {
     interactAction = context.action;
     isInteractPressed = context.performed;
   }
 
-  private void onMovementInput(InputAction.CallbackContext context)
+  public void onMovementInput(InputAction.CallbackContext context)
   {
     currentMovementInput = context.ReadValue<Vector2>();
     currentMovement.x = currentMovementInput.x;
@@ -189,7 +155,7 @@ public class PlayerController : MonoBehaviour
     else
     {
       float previousVelocityY = currentVerticalMovement.y;
-      float newVelocityY = currentVerticalMovement.y + (this.Gravity * Time.deltaTime);
+      float newVelocityY = currentVerticalMovement.y + (this.Gravity * UnityService.GetDeltaTime());
       float nextVelocityY = (previousVelocityY + newVelocityY) * 0.5f;
 
       currentVerticalMovement.y = nextVelocityY;
@@ -260,13 +226,14 @@ public class PlayerController : MonoBehaviour
     }
   }
 
-  void OnTriggerExit()
+  void OnTriggerExit(Collider otherCollider)
   {
-    // Note: This isn't triggered when Interactable in question is destroyed
-    // Hide the interaction tool tip
-    if (interactable != null) interactable.HideTooltip();
-    // When we leave, set the current interactable references to null.
-    interactable = null;
+    if (otherCollider.tag == "Interactable")
+    {
+      // Note: This isn't triggered when Interactable in question is destroyed
+      // When we leave, set the current interactable references to null.
+      interactable = null;
+    }
   }
 
   private void Move()
@@ -278,7 +245,6 @@ public class PlayerController : MonoBehaviour
 
   private void Translate()
   {
-    if (!this.IsPlayerMoving) return;
     Vector3? motionVector;
 
     if (overrideDestination != null)
@@ -315,7 +281,7 @@ public class PlayerController : MonoBehaviour
       targetRotation = this.InputTargetRotation;
     }
 
-    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * Time.deltaTime);
+    transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotationSpeed * UnityService.GetDeltaTime());
   }
 
   public void OverrideMovement(Vector3 targetPosition, float targetSpeed)
@@ -349,6 +315,7 @@ public class PlayerController : MonoBehaviour
     {
       case "UsePaw":
         interactionType = InteractionType.UsePaw;
+        interactionTransform = transform;
         break;
       case "UseBody":
         interactionType = InteractionType.UseBody;
@@ -376,7 +343,7 @@ public class PlayerController : MonoBehaviour
     switch (interactionName)
     {
       case "UsePaw":
-        UsePaw();
+        Pounce();
         break;
       case "UseBody":
         TakeRest();
@@ -391,22 +358,19 @@ public class PlayerController : MonoBehaviour
 
   private void Meow()
   {
-    Debug.Log("Meow");
     // Default Animation and Audio lives here...
     animator.Play("Meow", -1);
     playerAudio.PlayMeow();
   }
 
-  private void UsePaw()
+  private void Pounce()
   {
-    Debug.Log("UsePaw");
     gameObject.transform.Translate(Vector3.forward * pounceDistance, Space.Self);
     animator.SetTrigger("Pounce");
   }
 
   private void TakeRest()
   {
-    Debug.Log("TakeRest");
     animator.SetTrigger("Rest");
   }
 
@@ -425,6 +389,9 @@ public class PlayerController : MonoBehaviour
         break;
       case PlayerAnimation.Pee:
         animator.Play("Pee", -1);
+        break;
+      case PlayerAnimation.Scratch:
+        animator.Play("Scratch", -1);
         break;
       default:
         Debug.Log("No animation configured in PlayerController");
@@ -504,7 +471,8 @@ public class PlayerController : MonoBehaviour
   {
     get
     {
-      Vector3 lookTarget = (Vector3)overrideRotation;
+      Vector3 lookTarget = (Vector3)overrideRotation - transform.position;
+      lookTarget.y = 0f;
 
       // translate target to rotation
       return Quaternion.LookRotation(lookTarget.normalized, Vector3.up);
@@ -514,7 +482,7 @@ public class PlayerController : MonoBehaviour
   private void ClearOverrideWhenDone(Quaternion targetRotation)
   {
     float distance = Quaternion.Angle(transform.rotation, targetRotation);
-    bool isAtDestination = distance < 1;
+    bool isAtDestination = distance < .1;
 
     if (isAtDestination)
     {
@@ -536,11 +504,11 @@ public class PlayerController : MonoBehaviour
       cameraRelativeMotion.z *= this.SpeedMultiplier;
 
       // translate to camera relative direction
-      cameraRelativeMotion = Camera.main.transform.TransformVector(cameraRelativeMotion);
+      cameraRelativeMotion = UnityService.LocalToWorldSpace(cameraRelativeMotion);
       // apply jump/gravity
       cameraRelativeMotion += currentVerticalMovement;
 
-      return cameraRelativeMotion * Time.deltaTime;
+      return cameraRelativeMotion * UnityService.GetDeltaTime();
     }
   }
 
